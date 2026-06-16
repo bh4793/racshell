@@ -3,6 +3,18 @@
 #include <string>
 #include <iostream>
 
+#include "sear/sear.h"
+#include <nlohmann/json.hpp>
+#include <stdlib.h>
+
+std::string get_json_sample(const char *filename) {
+    char *json_sample_string = get_sample(filename, "r");
+    std::string json_sample_cpp_string =
+        nlohmann::json::parse(json_sample_string).dump();
+    free(json_sample_string);
+    return json_sample_cpp_string;
+}
+
 int main(int argc, char *argv[]) {
     argparse::ArgumentParser program("listuser");
 
@@ -38,6 +50,12 @@ int main(int argc, char *argv[]) {
     if (input.length() > 8) {
         std::cout << std::string("\u001b[31mRACSHELL Error\x1b[0m: Invalid input, must be a valid RACF userid \n");
     } else {
+
++       std::string request_json   = get_json_sample("test_extract_user.json");
+        sear_result_t *result =
+           sear(request_json.c_str(), request_json.length(), debug);
+        std::cout << "Result: " << result <<  std::string("\n");
+
         std::cout << std::string("\033[35m---------------------------------------------------------\033[37mRACSHELL\033[35m---\x1b[0m\n");
         std::cout << std::string("Listuser: ") << input << std::string("\n");
         std::cout << std::string("\033[35m--------------------------------------------------------------------\x1b[0m\n");
