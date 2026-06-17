@@ -1,0 +1,15 @@
+{
+    "default_fields": [
+        "base:name",
+        "base:owner",
+        "base:default_group",
+        "base:create_date"
+    ],
+    "sections": {
+        "groups": {
+            "base:group_connections": "base:group_connection_group"
+        },
+        "tso": ["tso"],
+        "omwvs": ["omwvs"]
+    }
+}
