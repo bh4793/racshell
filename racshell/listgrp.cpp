@@ -106,11 +106,5 @@ int main(int argc, char *argv[]) {
 
     std::cout << formatter->format(group_data) << "\n";
 
-    if (!json_output) {
-        std::cout << "\033[35m---------------------------------------------------------\033[37mRACSHELL\033[35m---\x1b[0m\n";
-        std::cout << "Listgrp: " << input << "\n";
-        std::cout << "\033[35m--------------------------------------------------------------------\x1b[0m\n";
-    }
-
     return 0;
 }
