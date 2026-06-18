@@ -19,6 +19,7 @@ int main(int argc, char *argv[])
         .nargs(argparse::nargs_pattern::any);
 
     racshell::add_toggle_argument(program, "-d", "--debug", "debug sear request and response");
+    racshell::add_toggle_argument(program, "-a", "--all-json", "output full raw SEAR JSON response");
 
     try
     {
@@ -40,6 +41,7 @@ int main(int argc, char *argv[])
     }
 
     bool debug = program.get<bool>("debug");
+    bool all_json = program.get<bool>("all-json");
 
     // Build traits object from --trait key=value pairs
     nlohmann::json traits = nlohmann::json::object();
@@ -78,6 +80,12 @@ int main(int argc, char *argv[])
     std::string request_json = req.dump();
 
     sear_result_t *result = sear(request_json.c_str(), request_json.length(), debug);
+    
+    if (all_json)
+    {
+        std::cout << result->result_json << "\n";
+        return 0;
+    }
 
     racshell::SearOperationInfo op_info = racshell::validate_sear_operation_result(result->result_json);
     if (!op_info.success)
