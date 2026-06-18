@@ -67,8 +67,6 @@ int main(int argc, char *argv[]) {
     std::string request_json = req.dump();
     sear_result_t* result = sear(request_json.c_str(), request_json.length(), debug);
 
-    std::cout << result->result_json << "\n"; // TODO: remove this debug output
-
     nlohmann::json response = nlohmann::json::parse(result->result_json);
 
     GroupData group_data;
