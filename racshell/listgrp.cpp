@@ -5,6 +5,7 @@
 
 #include "sear/sear.h"
 #include "lib/output_formatter.hpp"
+#include "lib/command_helper.hpp"
 #include <nlohmann/json.hpp>
 
 int main(int argc, char *argv[])
@@ -84,71 +85,31 @@ int main(int argc, char *argv[])
             return 0;
         }
 
-        nlohmann::json response = nlohmann::json::parse(result->result_json);
-        nlohmann::json return_codes = response.value("return_codes", nlohmann::json::object());
-        int sear_rc = return_codes.value("sear_return_code", 0);
-        int saf_rc = return_codes.value("saf_return_code", 0);
-        int racf_rc = return_codes.value("racf_return_code", 0);
-        int racf_reason = return_codes.value("racf_reason_code", 0);
-
-        if (sear_rc != 0 || saf_rc != 0 || racf_rc != 0)
-        {
-            std::cerr << "RACSHELL Error: request failed (sear=" << sear_rc
-                      << ", saf=" << saf_rc
-                      << ", racf=" << racf_rc
-                      << ", reason=" << racf_reason << ")\n";
+        racshell::SearResponseInfo sear_info = racshell::validate_sear_response(result->result_json, "group");
+        if (!sear_info.success) {
+            std::cerr << sear_info.error_message << "\n";
             return 1;
         }
-
-        nlohmann::json profile = response.value("profile", nlohmann::json::object());
-        nlohmann::json base = profile.value("base", nlohmann::json::object());
-
-        if (!response.contains("profile") || !profile.is_object() || !profile.contains("base") || !base.is_object())
-        {
-            std::cerr << "RACSHELL Error: group not found or missing profile data\n";
-            return 1;
-        }
+        nlohmann::json base = sear_info.base;
+        nlohmann::json profile = sear_info.profile;
 
         GroupData group_data;
         group_data.groupid = input;
 
-        if (base.contains("base:owner"))
-        {
-            group_data.owner = base["base:owner"];
-        }
+        racshell::assign_string(base, "base:owner", group_data.owner);
+        racshell::assign_string(base, "base:create_date", group_data.created_date);
+        racshell::assign_string(base, "base:superior_group", group_data.superior_group);
+        racshell::assign_string(base, "base:installation_data", group_data.installation_data);
+        racshell::assign_bool(base, "base:universal", group_data.universal);
+        racshell::assign_bool(base, "base:terminal_universal_access", group_data.terminal_universal_access);
 
-        if (base.contains("base:create_date"))
-        {
-            group_data.created_date = base["base:create_date"];
-        }
-        if (base.contains("base:superior_group"))
-        {
-            group_data.superior_group = base["base:superior_group"];
-        }
-        if (base.contains("base:installation_data"))
-        {
-            group_data.installation_data = base["base:installation_data"];
-        }
-
-        if (base.contains("base:universal"))
-            group_data.universal = base["base:universal"].get<bool>();
-
-        if (base.contains("base:terminal_universal_access"))
-            group_data.terminal_universal_access = base["base:terminal_universal_access"].get<bool>();
-
-        if (users && base.contains("base:connected_users"))
+        if (users && base.contains("base:connected_users") && base["base:connected_users"].is_array())
         {
             for (const auto &u : base["base:connected_users"])
             {
                 GroupUser gu;
-                if (u.contains("base:connected_userid"))
-                {
-                    gu.userid = u["base:connected_userid"];
-                }
-                if (u.contains("base:connected_user_authority"))
-                {
-                    gu.authority = u["base:connected_user_authority"];
-                }
+                racshell::assign_string(u, "base:connected_userid", gu.userid);
+                racshell::assign_string(u, "base:connected_user_authority", gu.authority);
                 group_data.connected_users.push_back(gu);
             }
         }
