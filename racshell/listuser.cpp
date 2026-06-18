@@ -113,36 +113,53 @@ int main(int argc, char *argv[])
         }
 
         nlohmann::json response = nlohmann::json::parse(result->result_json);
+        nlohmann::json profile = response.value("profile", nlohmann::json::object());
+        nlohmann::json base = profile.value("base", nlohmann::json::object());
 
         UserData user_data;
         user_data.userid = input;
-        user_data.name = response["profile"]["base"]["base:name"];
-        user_data.owner = response["profile"]["base"]["base:owner"];
-        user_data.created_date = response["profile"]["base"]["base:create_date"];
-        user_data.revoked = response["profile"]["base"]["base:revoked"].get<bool>();
-
-        if (groups)
+        if (base.contains("base:name"))
         {
-            for (const auto &group : response["profile"]["base"]["base:group_connections"])
+            user_data.name = base["base:name"];
+        }
+        if (base.contains("base:owner"))
+        {
+            user_data.owner = base["base:owner"];
+        }
+        if (base.contains("base:create_date"))
+        {
+            user_data.created_date = base["base:create_date"];
+        }
+        if (base.contains("base:revoked"))
+        {
+            user_data.revoked = base["base:revoked"].get<bool>();
+        }
+
+        if (groups && base.contains("base:group_connections"))
+        {
+            for (const auto &group : base["base:group_connections"])
             {
-                user_data.groups.push_back(group["base:group_connection_group"]);
+                if (group.contains("base:group_connection_group"))
+                {
+                    user_data.groups.push_back(group["base:group_connection_group"]);
+                }
             }
         }
-        if (tso)
+        if (tso && profile.contains("tso"))
         {
-            user_data.tso = response["profile"]["tso"];
+            user_data.tso = profile["tso"];
         }
-        if (omvs)
+        if (omvs && profile.contains("omvs"))
         {
-            user_data.omvs = response["profile"]["omvs"];
+            user_data.omvs = profile["omvs"];
         }
-        if (kerberos)
+        if (kerberos && profile.contains("kerberos"))
         {
-            user_data.kerberos = response["profile"]["kerberos"];
+            user_data.kerberos = profile["kerberos"];
         }
-        if (cics)
+        if (cics && profile.contains("cics"))
         {
-            user_data.cics = response["profile"]["cics"];
+            user_data.cics = profile["cics"];
         }
 
         std::unique_ptr<OutputFormatter> formatter;
