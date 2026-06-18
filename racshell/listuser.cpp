@@ -61,6 +61,12 @@ int main(int argc, char *argv[])
         .implicit_value(true)
         .nargs(0);
 
+    program.add_argument("-a", "--all-json")
+        .help("output full raw SEAR JSON response")
+        .default_value(false)
+        .implicit_value(true)
+        .nargs(0);
+
     try
     {
         program.parse_args(argc, argv);
@@ -88,6 +94,7 @@ int main(int argc, char *argv[])
         bool cics = program.get<bool>("cics");
         bool omvs = program.get<bool>("omvs");
         bool json_output = program.get<bool>("json");
+        bool all_json = program.get<bool>("all-json");
 
 
         // extract user information
@@ -98,6 +105,12 @@ int main(int argc, char *argv[])
 
         std::string request_json = req.dump();
         sear_result_t *result = sear(request_json.c_str(), request_json.length(), debug);
+
+        if (all_json)
+        {
+            std::cout << result->result_json << "\n";
+            return 0;
+        }
 
         nlohmann::json response = nlohmann::json::parse(result->result_json);
 
