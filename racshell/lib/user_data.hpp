@@ -10,6 +10,7 @@ struct UserData {
     std::string name;
     std::string owner;
     std::string created_date;
+    bool revoked = false;
     std::vector<std::string> groups;
     nlohmann::json tso;
     nlohmann::json omvs;

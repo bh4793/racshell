@@ -89,7 +89,7 @@ int main(int argc, char *argv[])
         bool omvs = program.get<bool>("omvs");
         bool json_output = program.get<bool>("json");
 
-        
+
         // extract user information
         nlohmann::json req = {
             {"operation", "extract"},
@@ -106,6 +106,7 @@ int main(int argc, char *argv[])
         user_data.name = response["profile"]["base"]["base:name"];
         user_data.owner = response["profile"]["base"]["base:owner"];
         user_data.created_date = response["profile"]["base"]["base:create_date"];
+        user_data.revoked = response["profile"]["base"]["base:revoked"].get<bool>();
 
         if (groups)
         {

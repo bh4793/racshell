@@ -8,6 +8,7 @@ std::string TextFormatter::format(const UserData& user) {
     ss << "Name: " << user.name << "\n";
     ss << "Owner: " << user.owner << "\n";
     ss << "Created: " << user.created_date << "\n";
+    ss << "Revoked: " << (user.revoked ? "YES" : "NO") << "\n";
     
     if (!user.groups.empty()) {
         ss << "Groups: ";

@@ -7,6 +7,7 @@ std::string JsonFormatter::format(const UserData& user) {
     output["name"] = user.name;
     output["owner"] = user.owner;
     output["created_date"] = user.created_date;
+    output["revoked"] = user.revoked;
     
     if (!user.groups.empty()) {
         output["groups"] = user.groups;
