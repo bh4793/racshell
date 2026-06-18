@@ -1,10 +1,22 @@
 #pragma once
 
+#include <argparse.hpp>
 #include <nlohmann/json.hpp>
 #include <string>
 #include <iostream>
 
 namespace racshell {
+
+inline void add_toggle_argument(argparse::ArgumentParser& program,
+                                const char* short_name,
+                                const char* long_name,
+                                const char* help_text) {
+    program.add_argument(short_name, long_name)
+        .help(help_text)
+        .default_value(false)
+        .implicit_value(true)
+        .nargs(0);
+}
 
 struct SearResponseInfo {
     bool success;

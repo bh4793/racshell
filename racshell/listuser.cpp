@@ -20,53 +20,14 @@ int main(int argc, char *argv[])
         .help("RACF user to list");
 
     // Optional parameters for data not displayed by default
-    program.add_argument("-g", "--groups")
-        .help("list connected RACF groups")
-        .default_value(false)
-        .implicit_value(true)
-        .nargs(0);
-
-    program.add_argument("-t", "--tso")
-        .help("list TSO segment")
-        .default_value(false)
-        .implicit_value(true)
-        .nargs(0);
-
-    program.add_argument("-k", "--kerberos")
-        .help("list kerberos segment")
-        .default_value(false)
-        .implicit_value(true)
-        .nargs(0);
-
-    program.add_argument("-c", "--cics")
-        .help("list CICS segment")
-        .default_value(false)
-        .implicit_value(true)
-        .nargs(0);
-
-    program.add_argument("-o", "--omvs")
-        .help("list OMVS segment")
-        .default_value(false)
-        .implicit_value(true)
-        .nargs(0);
-
-    program.add_argument("-d", "--debug")
-        .help("debug sear request and response")
-        .default_value(false)
-        .implicit_value(true)
-        .nargs(0);
-
-    program.add_argument("-j", "--json")
-        .help("output as JSON")
-        .default_value(false)
-        .implicit_value(true)
-        .nargs(0);
-
-    program.add_argument("-a", "--all-json")
-        .help("output full raw SEAR JSON response")
-        .default_value(false)
-        .implicit_value(true)
-        .nargs(0);
+    racshell::add_toggle_argument(program, "-g", "--groups", "list connected RACF groups");
+    racshell::add_toggle_argument(program, "-t", "--tso", "list TSO segment");
+    racshell::add_toggle_argument(program, "-k", "--kerberos", "list kerberos segment");
+    racshell::add_toggle_argument(program, "-c", "--cics", "list CICS segment");
+    racshell::add_toggle_argument(program, "-o", "--omvs", "list OMVS segment");
+    racshell::add_toggle_argument(program, "-d", "--debug", "debug sear request and response");
+    racshell::add_toggle_argument(program, "-j", "--json", "output as JSON");
+    racshell::add_toggle_argument(program, "-a", "--all-json", "output full raw SEAR JSON response");
 
     try
     {

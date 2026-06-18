@@ -15,35 +15,11 @@ int main(int argc, char *argv[])
     program.add_argument("group")
         .help("RACF group to list");
 
-    program.add_argument("-u", "--users")
-        .help("list connected users")
-        .default_value(false)
-        .implicit_value(true)
-        .nargs(0);
-
-    program.add_argument("-o", "--omvs")
-        .help("list OMVS segment")
-        .default_value(false)
-        .implicit_value(true)
-        .nargs(0);
-
-    program.add_argument("-d", "--debug")
-        .help("debug sear request and response")
-        .default_value(false)
-        .implicit_value(true)
-        .nargs(0);
-
-    program.add_argument("-j", "--json")
-        .help("output as JSON")
-        .default_value(false)
-        .implicit_value(true)
-        .nargs(0);
-
-    program.add_argument("-a", "--all-json")
-        .help("output full raw SEAR JSON response")
-        .default_value(false)
-        .implicit_value(true)
-        .nargs(0);
+    racshell::add_toggle_argument(program, "-u", "--users", "list connected users");
+    racshell::add_toggle_argument(program, "-o", "--omvs", "list OMVS segment");
+    racshell::add_toggle_argument(program, "-d", "--debug", "debug sear request and response");
+    racshell::add_toggle_argument(program, "-j", "--json", "output as JSON");
+    racshell::add_toggle_argument(program, "-a", "--all-json", "output full raw SEAR JSON response");
 
     try
     {
