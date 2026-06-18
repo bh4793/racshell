@@ -76,6 +76,9 @@ int main(int argc, char *argv[]) {
     group_data.owner          = response["profile"]["base"]["base:owner"];
     group_data.created_date   = response["profile"]["base"]["base:create_date"];
     group_data.superior_group = response["profile"]["base"]["base:superior_group"];
+    if (response["profile"]["base"].contains("base:installation_data")) {
+        group_data.installation_data = response["profile"]["base"]["base:installation_data"];
+    }
 
     if (response["profile"]["base"].contains("base:universal"))
         group_data.universal = response["profile"]["base"]["base:universal"].get<bool>();

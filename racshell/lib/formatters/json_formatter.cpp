@@ -41,7 +41,8 @@ std::string JsonFormatter::format(const GroupData& group) { // TODO: check this 
     output["superior_group"] = group.superior_group;
     output["universal"] = group.universal;
     output["terminal_universal_access"] = group.terminal_universal_access;
-
+    output["installation_data"] = group.installation_data;
+    
     if (!group.connected_users.empty()) {
         nlohmann::json users = nlohmann::json::array();
         for (const auto& u : group.connected_users) {
