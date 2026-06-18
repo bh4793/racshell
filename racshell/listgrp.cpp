@@ -1,4 +1,3 @@
-
 #include <argparse.hpp>
 #include <string>
 #include <iostream>
@@ -7,38 +6,16 @@
 #include "sear/sear.h"
 #include "lib/output_formatter.hpp"
 #include <nlohmann/json.hpp>
-#include <stdlib.h>
-#include <vector>
 
 int main(int argc, char *argv[])
 {
-    argparse::ArgumentParser program("listuser");
+    argparse::ArgumentParser program("listgrp");
 
-    // Main parameter, the user to list
-    program.add_argument("user")
-        .help("RACF user to list");
+    program.add_argument("group")
+        .help("RACF group to list");
 
-    // Optional parameters for data not displayed by default
-    program.add_argument("-g", "--groups")
-        .help("list connected RACF groups")
-        .default_value(false)
-        .implicit_value(true)
-        .nargs(0);
-
-    program.add_argument("-t", "--tso")
-        .help("list TSO segment")
-        .default_value(false)
-        .implicit_value(true)
-        .nargs(0);
-
-    program.add_argument("-k", "--kerberos")
-        .help("list kerberos segment")
-        .default_value(false)
-        .implicit_value(true)
-        .nargs(0);
-
-    program.add_argument("-c", "--cics")
-        .help("list CICS segment")
+    program.add_argument("-u", "--users")
+        .help("list connected users")
         .default_value(false)
         .implicit_value(true)
         .nargs(0);
@@ -78,30 +55,25 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    std::string input = program.get<std::string>("user");
+    std::string input = program.get<std::string>("group");
 
-    // Check if the input is too long to be a valid user
     if (input.length() > 8)
     {
-        std::cout << std::string("\u001b[31mRACSHELL Error\x1b[0m: Invalid input, must be a valid RACF userid \n");
+        std::cout << "\u001b[31mRACSHELL Error\x1b[0m: Invalid input, must be a valid RACF group name\n";
     }
     else
     {
+
         bool debug = program.get<bool>("debug");
-        bool groups = program.get<bool>("groups");
-        bool tso = program.get<bool>("tso");
-        bool kerberos = program.get<bool>("kerberos");
-        bool cics = program.get<bool>("cics");
+        bool users = program.get<bool>("users");
         bool omvs = program.get<bool>("omvs");
         bool json_output = program.get<bool>("json");
         bool all_json = program.get<bool>("all-json");
 
-
-        // extract user information
         nlohmann::json req = {
             {"operation", "extract"},
-            {"admin_type", "user"},
-            {"userid", input}};
+            {"admin_type", "group"},
+            {"group", input}};
 
         std::string request_json = req.dump();
         sear_result_t *result = sear(request_json.c_str(), request_json.length(), debug);
@@ -133,54 +105,57 @@ int main(int argc, char *argv[])
 
         if (!response.contains("profile") || !profile.is_object() || !profile.contains("base") || !base.is_object())
         {
-            std::cerr << "RACSHELL Error: user not found or missing profile data\n";
+            std::cerr << "RACSHELL Error: group not found or missing profile data\n";
             return 1;
         }
 
-        UserData user_data;
-        user_data.userid = input;
-        if (base.contains("base:name"))
-        {
-            user_data.name = base["base:name"];
-        }
+        GroupData group_data;
+        group_data.groupid = input;
+
         if (base.contains("base:owner"))
         {
-            user_data.owner = base["base:owner"];
-        }
-        if (base.contains("base:create_date"))
-        {
-            user_data.created_date = base["base:create_date"];
-        }
-        if (base.contains("base:revoked"))
-        {
-            user_data.revoked = base["base:revoked"].get<bool>();
+            group_data.owner = base["base:owner"];
         }
 
-        if (groups && base.contains("base:group_connections"))
+        if (base.contains("base:create_date"))
         {
-            for (const auto &group : base["base:group_connections"])
+            group_data.created_date = base["base:create_date"];
+        }
+        if (base.contains("base:superior_group"))
+        {
+            group_data.superior_group = base["base:superior_group"];
+        }
+        if (base.contains("base:installation_data"))
+        {
+            group_data.installation_data = base["base:installation_data"];
+        }
+
+        if (base.contains("base:universal"))
+            group_data.universal = base["base:universal"].get<bool>();
+
+        if (base.contains("base:terminal_universal_access"))
+            group_data.terminal_universal_access = base["base:terminal_universal_access"].get<bool>();
+
+        if (users && base.contains("base:connected_users"))
+        {
+            for (const auto &u : base["base:connected_users"])
             {
-                if (group.contains("base:group_connection_group"))
+                GroupUser gu;
+                if (u.contains("base:connected_userid"))
                 {
-                    user_data.groups.push_back(group["base:group_connection_group"]);
+                    gu.userid = u["base:connected_userid"];
                 }
+                if (u.contains("base:connected_user_authority"))
+                {
+                    gu.authority = u["base:connected_user_authority"];
+                }
+                group_data.connected_users.push_back(gu);
             }
         }
-        if (tso && profile.contains("tso"))
-        {
-            user_data.tso = profile["tso"];
-        }
+
         if (omvs && profile.contains("omvs"))
         {
-            user_data.omvs = profile["omvs"];
-        }
-        if (kerberos && profile.contains("kerberos"))
-        {
-            user_data.kerberos = profile["kerberos"];
-        }
-        if (cics && profile.contains("cics"))
-        {
-            user_data.cics = profile["cics"];
+            group_data.omvs = profile["omvs"];
         }
 
         std::unique_ptr<OutputFormatter> formatter;
@@ -193,8 +168,7 @@ int main(int argc, char *argv[])
             formatter = std::make_unique<TextFormatter>();
         }
 
-        std::cout << formatter->format(user_data) << std::string("\n");
+        std::cout << formatter->format(group_data) << "\n";
     }
-
     return 0;
 }

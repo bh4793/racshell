@@ -27,3 +27,6 @@ target_link_libraries(racshell PUBLIC sear)
 
 add_executable(listuser "racshell/listuser.cpp")
 target_link_libraries(listuser racshell -static)
+
+add_executable(listgrp "racshell/listgrp.cpp")
+target_link_libraries(listgrp racshell -static)
