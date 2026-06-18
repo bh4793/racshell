@@ -56,7 +56,6 @@ int main(int argc, char *argv[]) {
 
     if (input.length() > 8) {
         std::cout << "\u001b[31mRACSHELL Error\x1b[0m: Invalid input, must be a valid RACF group name\n";
-        return 1;
     }
 
     bool debug       = program.get<bool>("debug");
@@ -80,14 +79,34 @@ int main(int argc, char *argv[]) {
     }
 
     nlohmann::json response = nlohmann::json::parse(result->result_json);
+    nlohmann::json return_codes = response.value("return_codes", nlohmann::json::object());
+    int sear_rc = return_codes.value("sear_return_code", 0);
+    int saf_rc = return_codes.value("saf_return_code", 0);
+    int racf_rc = return_codes.value("racf_return_code", 0);
+    int racf_reason = return_codes.value("racf_reason_code", 0);
+
+    if (sear_rc != 0 || saf_rc != 0 || racf_rc != 0) {
+        std::cerr << "RACSHELL Error: request failed (sear=" << sear_rc
+                  << ", saf=" << saf_rc
+                  << ", racf=" << racf_rc
+                  << ", reason=" << racf_reason << ")\n";
+        return 1;
+    }
+
     nlohmann::json profile = response.value("profile", nlohmann::json::object());
     nlohmann::json base = profile.value("base", nlohmann::json::object());
+
+    if (!response.contains("profile") || !profile.is_object() || !profile.contains("base") || !base.is_object()) {
+        std::cerr << "RACSHELL Error: group not found or missing profile data\n";
+        return 1;
+    }
 
     GroupData group_data;
     group_data.groupid = input;
 
-    
-    group_data.owner = base["base:owner"];
+    if (base.contains("base:owner")) {
+        group_data.owner = base["base:owner"];
+    }
     
     if (base.contains("base:create_date")) {
         group_data.created_date = base["base:create_date"];
