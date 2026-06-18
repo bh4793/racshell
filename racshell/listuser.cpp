@@ -6,6 +6,7 @@
 
 #include "sear/sear.h"
 #include "lib/output_formatter.hpp"
+#include "lib/command_helper.hpp"
 #include <nlohmann/json.hpp>
 #include <stdlib.h>
 #include <vector>
@@ -112,49 +113,20 @@ int main(int argc, char *argv[])
             return 0;
         }
 
-        nlohmann::json response = nlohmann::json::parse(result->result_json);
-        nlohmann::json return_codes = response.value("return_codes", nlohmann::json::object());
-        int sear_rc = return_codes.value("sear_return_code", 0);
-        int saf_rc = return_codes.value("saf_return_code", 0);
-        int racf_rc = return_codes.value("racf_return_code", 0);
-        int racf_reason = return_codes.value("racf_reason_code", 0);
-
-        if (sear_rc != 0 || saf_rc != 0 || racf_rc != 0)
-        {
-            std::cerr << "RACSHELL Error: request failed (sear=" << sear_rc
-                      << ", saf=" << saf_rc
-                      << ", racf=" << racf_rc
-                      << ", reason=" << racf_reason << ")\n";
+        racshell::SearResponseInfo sear_info = racshell::validate_sear_response(result->result_json, "user");
+        if (!sear_info.success) {
+            std::cerr << sear_info.error_message << "\n";
             return 1;
         }
-
-        nlohmann::json profile = response.value("profile", nlohmann::json::object());
-        nlohmann::json base = profile.value("base", nlohmann::json::object());
-
-        if (!response.contains("profile") || !profile.is_object() || !profile.contains("base") || !base.is_object())
-        {
-            std::cerr << "RACSHELL Error: user not found or missing profile data\n";
-            return 1;
-        }
+        nlohmann::json base = sear_info.base;
+        nlohmann::json profile = sear_info.profile;
 
         UserData user_data;
         user_data.userid = input;
-        if (base.contains("base:name"))
-        {
-            user_data.name = base["base:name"];
-        }
-        if (base.contains("base:owner"))
-        {
-            user_data.owner = base["base:owner"];
-        }
-        if (base.contains("base:create_date"))
-        {
-            user_data.created_date = base["base:create_date"];
-        }
-        if (base.contains("base:revoked"))
-        {
-            user_data.revoked = base["base:revoked"].get<bool>();
-        }
+        racshell::assign_string(base, "base:name", user_data.name);
+        racshell::assign_string(base, "base:owner", user_data.owner);
+        racshell::assign_string(base, "base:create_date", user_data.created_date);
+        racshell::assign_bool(base, "base:revoked", user_data.revoked);
 
         if (groups && base.contains("base:group_connections"))
         {
