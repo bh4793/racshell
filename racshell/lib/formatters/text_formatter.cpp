@@ -59,3 +59,34 @@ std::string TextFormatter::format(const UserData& user) {
     
     return ss.str();
 }
+
+std::string TextFormatter::format(const GroupData& group) {
+    std::stringstream ss;
+
+    ss << "Group: " << group.groupid << "\n";
+    ss << "Owner: " << group.owner << "\n";
+    ss << "Created: " << group.created_date << "\n";
+    ss << "Superior group: " << group.superior_group << "\n";
+    ss << "Universal: " << (group.universal ? "YES" : "NO") << "\n";
+
+    if (!group.installation_data.empty()) {
+        ss << "Installation data: " << group.installation_data << "\n";
+    }
+
+    if (!group.connected_users.empty()) {
+        ss << "Users:\n";
+        for (const auto& connected_user : group.connected_users) {
+            ss << "  " << connected_user.userid << " ("
+               << connected_user.authority << ")\n";
+        }
+    }
+
+    if (!group.omvs.is_null() && !group.omvs.empty()) {
+        ss << "OMVS:\n";
+        if (group.omvs.contains("omvs:gid")) {
+            ss << "  GID: " << group.omvs["omvs:gid"] << "\n";
+        }
+    }
+
+    return ss.str();
+}
