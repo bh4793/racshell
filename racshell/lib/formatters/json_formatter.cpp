@@ -31,3 +31,28 @@ std::string JsonFormatter::format(const UserData& user) {
     
     return output.dump(2);
 }
+
+std::string JsonFormatter::format(const GroupData& group) { // TODO: check this through
+    nlohmann::json output;
+
+    output["groupid"] = group.groupid;
+    output["owner"] = group.owner;
+    output["created_date"] = group.created_date;
+    output["superior_group"] = group.superior_group;
+    output["universal"] = group.universal;
+    output["terminal_universal_access"] = group.terminal_universal_access;
+
+    if (!group.connected_users.empty()) {
+        nlohmann::json users = nlohmann::json::array();
+        for (const auto& u : group.connected_users) {
+            users.push_back({{"userid", u.userid}, {"authority", u.authority}});
+        }
+        output["connected_users"] = users;
+    }
+
+    if (!group.omvs.is_null() && !group.omvs.empty()) {
+        output["omvs"] = group.omvs;
+    }
+
+    return output.dump(2);
+}
