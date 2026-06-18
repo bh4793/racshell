@@ -25,6 +25,52 @@ struct SearResponseInfo {
     nlohmann::json base;
 };
 
+struct SearOperationInfo {
+    bool success;
+    std::string error_message;
+    nlohmann::json response;
+};
+
+inline SearOperationInfo validate_sear_operation_result(const char* result_json) {
+    SearOperationInfo info;
+    info.success = false;
+
+    try {
+        nlohmann::json response = nlohmann::json::parse(result_json);
+        nlohmann::json return_codes = response.value("return_codes", nlohmann::json::object());
+        int sear_rc = return_codes.value("sear_return_code", 0);
+        int saf_rc = return_codes.value("saf_return_code", 0);
+        int racf_rc = return_codes.value("racf_return_code", 0);
+        int racf_reason = return_codes.value("racf_reason_code", 0);
+
+        if (sear_rc != 0 || saf_rc != 0 || racf_rc != 0) {
+            info.error_message = "RACSHELL Error: request failed (sear=" + std::to_string(sear_rc)
+                + ", saf=" + std::to_string(saf_rc)
+                + ", racf=" + std::to_string(racf_rc)
+                + ", reason=" + std::to_string(racf_reason) + ")";
+            info.response = response;
+            return info;
+        }
+
+        info.success = true;
+        info.response = response;
+        return info;
+    } catch (const std::exception& e) {
+        info.error_message = std::string("RACSHELL Error: Failed to parse SEAR response: ") + e.what();
+        return info;
+    }
+}
+
+inline void print_sear_errors(const nlohmann::json& response, std::ostream& output) {
+    if (response.contains("errors") && response["errors"].is_array()) {
+        for (const auto& err : response["errors"]) {
+            if (err.is_string()) {
+                output << "  " << err.get<std::string>() << "\n";
+            }
+        }
+    }
+}
+
 /**
  * Validate and extract profile/base from SEAR response JSON string
  * Parses the JSON and checks return codes and structure validity

@@ -3,7 +3,7 @@
 #include <iostream>
 #include <vector>
 
-//#include "sear/sear.h"
+#include "sear/sear.h"
 #include "lib/command_helper.hpp"
 #include <nlohmann/json.hpp>
 
@@ -76,34 +76,17 @@ int main(int argc, char *argv[])
     };
 
     std::string request_json = req.dump();
-    // sear_result_t *result = sear(request_json.c_str(), request_json.length(), debug);
 
-    // nlohmann::json response = nlohmann::json::parse(result->result_json);
-    // nlohmann::json return_codes = response.value("return_codes", nlohmann::json::object());
-    // int sear_rc = return_codes.value("sear_return_code", 0);
-    // int saf_rc  = return_codes.value("saf_return_code", 0);
-    // int racf_rc = return_codes.value("racf_return_code", 0);
-    // int racf_reason = return_codes.value("racf_reason_code", 0);
+    sear_result_t *result = sear(request_json.c_str(), request_json.length(), debug);
 
-    // if (sear_rc != 0 || saf_rc != 0 || racf_rc != 0)
-    // {
-    //     std::cerr << "RACSHELL Error: request failed (sear=" << sear_rc
-    //               << ", saf=" << saf_rc
-    //               << ", racf=" << racf_rc
-    //               << ", reason=" << racf_reason << ")\n";
+    racshell::SearOperationInfo op_info = racshell::validate_sear_operation_result(result->result_json);
+    if (!op_info.success)
+    {
+        std::cerr << op_info.error_message << "\n";
+        racshell::print_sear_errors(op_info.response, std::cerr);
+        return 1;
+    }
 
-    //     // Print any SEAR errors from the response
-    //     if (response.contains("errors") && response["errors"].is_array())
-    //     {
-    //         for (const auto &err : response["errors"])
-    //         {
-    //             if (err.is_string())
-    //                 std::cerr << "  " << err.get<std::string>() << "\n";
-    //         }
-    //     }
-    //     return 1;
-    // }
-
-    std::cout << "User " << request_json << " created successfully.\n";
+    std::cout << "User " << userid << " created successfully.\n";
     return 0;
 }
