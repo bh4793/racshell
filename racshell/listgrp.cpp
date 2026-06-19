@@ -36,7 +36,9 @@ int main(int argc, char *argv[])
 
     if (input.length() > 8)
     {
-        std::cout << "\u001b[31mRACSHELL Error\x1b[0m: Invalid input, must be a valid RACF group name\n";
+        racshell::print_error_prefix(std::cerr);
+        std::cerr << "Invalid input, must be a valid RACF group name\n";
+        return 1;
     }
     else
     {

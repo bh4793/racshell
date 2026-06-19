@@ -6,8 +6,32 @@
 #include <iostream>
 #include <algorithm>
 #include <cctype>
+#include <string_view>
 
 namespace racshell {
+
+namespace terminal_color {
+
+inline constexpr std::string_view reset = "\x1b[0m";
+inline constexpr std::string_view red = "\x1b[31m";
+inline constexpr std::string_view green = "\x1b[32m";
+inline constexpr std::string_view yellow = "\x1b[33m";
+inline constexpr std::string_view blue = "\x1b[34m";
+
+}  // namespace terminal_color
+
+inline std::ostream& colorize(std::ostream& output, std::string_view color) {
+    return output << color;
+}
+
+inline std::ostream& reset_color(std::ostream& output) {
+    return output << terminal_color::reset;
+}
+
+inline void print_error_prefix(std::ostream& output) {
+    colorize(output, terminal_color::red) << "RACSHELL Error";
+    reset_color(output) << ": ";
+}
 
 inline void add_toggle_argument(argparse::ArgumentParser& program,
                                 const char* short_name,
@@ -129,7 +153,8 @@ inline bool parse_traits(const std::vector<std::string>& trait_args, nlohmann::j
     for (const auto& trait : trait_args) {
         auto sep = trait.find('=');
         if (sep == std::string::npos) {
-            std::cerr << "\u001b[31mRACSHELL Error\x1b[0m: trait must be in key=value format, got: " << trait << "\n";
+            print_error_prefix(std::cerr);
+            std::cerr << "trait must be in key=value format, got: " << trait << "\n";
             return false;
         }
         std::string key   = trait.substr(0, sep);

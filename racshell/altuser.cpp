@@ -35,7 +35,8 @@ int main(int argc, char *argv[])
     std::string userid = program.get<std::string>("userid");
     if (userid.length() > 8)
     {
-        std::cerr << "\u001b[31mRACSHELL Error\x1b[0m: Invalid input, must be a valid RACF userid\n";
+        racshell::print_error_prefix(std::cerr);
+        std::cerr << "Invalid input, must be a valid RACF userid\n";
         return 1;
     }
 
