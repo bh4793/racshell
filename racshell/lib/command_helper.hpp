@@ -4,6 +4,8 @@
 #include <nlohmann/json.hpp>
 #include <string>
 #include <iostream>
+#include <algorithm>
+#include <cctype>
 
 namespace racshell {
 
@@ -133,8 +135,13 @@ inline bool parse_traits(const std::vector<std::string>& trait_args, nlohmann::j
         std::string key   = trait.substr(0, sep);
         std::string value = trait.substr(sep + 1);
 
-        if (value == "true" || value == "TRUE")  { traits[key] = true;  continue; }
-        if (value == "false" || value == "FALSE") { traits[key] = false; continue; }
+        // Convert to lowercase for case-insensitive comparison
+        std::string value_lower = value;
+        std::transform(value_lower.begin(), value_lower.end(), value_lower.begin(),
+                      [](unsigned char c) { return std::tolower(c); });
+
+        if (value_lower == "true")  { traits[key] = true;  continue; }
+        if (value_lower == "false") { traits[key] = false; continue; }
 
         try {
             size_t pos;
