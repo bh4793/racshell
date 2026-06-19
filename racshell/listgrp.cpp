@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
     }
     catch (const std::exception &err)
     {
-        std::cerr << err.what() << std::endl;
+        racshell::print_error(std::cerr, err.what());
         std::cerr << program;
         return 1;
     }
@@ -36,8 +36,7 @@ int main(int argc, char *argv[])
 
     if (input.length() > 8)
     {
-        racshell::print_error_prefix(std::cerr);
-        std::cerr << "Invalid input, must be a valid RACF group name\n";
+        racshell::print_error(std::cerr, "Invalid input, must be a valid RACF group name");
         return 1;
     }
     else
@@ -65,7 +64,7 @@ int main(int argc, char *argv[])
 
         racshell::SearResponseInfo sear_info = racshell::validate_sear_response(result->result_json, "group");
         if (!sear_info.success) {
-            std::cerr << sear_info.error_message << "\n";
+            racshell::print_error(std::cerr, sear_info.error_message);
             return 1;
         }
         nlohmann::json base = sear_info.base;

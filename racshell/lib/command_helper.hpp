@@ -33,6 +33,11 @@ inline void print_error_prefix(std::ostream& output) {
     reset_color(output) << ": ";
 }
 
+inline void print_error(std::ostream& output, const std::string& message) {
+    print_error_prefix(output);
+    output << message << "\n";
+}
+
 inline void print_success_prefix(std::ostream& output) {
     colorize(output, terminal_color::green) << "RACSHELL Success";
     reset_color(output) << ": ";
@@ -75,7 +80,7 @@ inline SearOperationInfo validate_sear_operation_result(const char* result_json)
         int racf_reason = return_codes.value("racf_reason_code", 0);
 
         if (sear_rc != 0 || saf_rc != 0 || racf_rc != 0) {
-            info.error_message = "RACSHELL Error: request failed (sear=" + std::to_string(sear_rc)
+            info.error_message = "request failed (sear=" + std::to_string(sear_rc)
                 + ", saf=" + std::to_string(saf_rc)
                 + ", racf=" + std::to_string(racf_rc)
                 + ", reason=" + std::to_string(racf_reason) + ")";
@@ -87,7 +92,7 @@ inline SearOperationInfo validate_sear_operation_result(const char* result_json)
         info.response = response;
         return info;
     } catch (const std::exception& e) {
-        info.error_message = std::string("RACSHELL Error: Failed to parse SEAR response: ") + e.what();
+        info.error_message = std::string("Failed to parse SEAR response: ") + e.what();
         return info;
     }
 }
@@ -121,7 +126,7 @@ inline SearResponseInfo validate_sear_response(const char* result_json, const st
         int racf_reason = return_codes.value("racf_reason_code", 0);
 
         if (sear_rc != 0 || saf_rc != 0 || racf_rc != 0) {
-            info.error_message = "RACSHELL Error: request failed (sear=" + std::to_string(sear_rc)
+            info.error_message = "request failed (sear=" + std::to_string(sear_rc)
                 + ", saf=" + std::to_string(saf_rc)
                 + ", racf=" + std::to_string(racf_rc)
                 + ", reason=" + std::to_string(racf_reason) + ")";
@@ -134,7 +139,7 @@ inline SearResponseInfo validate_sear_response(const char* result_json, const st
 
         if (!response.contains("profile") || !profile.is_object() || 
             !profile.contains("base") || !base.is_object()) {
-            info.error_message = std::string("RACSHELL Error: ") + entity_type + " not found or missing profile data";
+            info.error_message = entity_type + " not found or missing profile data";
             return info;
         }
 
@@ -143,7 +148,7 @@ inline SearResponseInfo validate_sear_response(const char* result_json, const st
         info.base = base;
         return info;
     } catch (const std::exception& e) {
-        info.error_message = std::string("RACSHELL Error: Failed to parse SEAR response: ") + e.what();
+        info.error_message = std::string("Failed to parse SEAR response: ") + e.what();
         return info;
     }
 }
@@ -158,8 +163,7 @@ inline bool parse_traits(const std::vector<std::string>& trait_args, nlohmann::j
     for (const auto& trait : trait_args) {
         auto sep = trait.find('=');
         if (sep == std::string::npos) {
-            print_error_prefix(std::cerr);
-            std::cerr << "trait must be in key=value format, got: " << trait << "\n";
+            print_error(std::cerr, "trait must be in key=value format, got: " + trait);
             return false;
         }
         std::string key   = trait.substr(0, sep);

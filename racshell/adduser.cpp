@@ -36,8 +36,7 @@ int main(int argc, char *argv[])
 
     if (userid.length() > 8)
     {
-        racshell::print_error_prefix(std::cerr);
-        std::cerr << "Invalid input, must be a valid RACF userid\n";
+        racshell::print_error(std::cerr, "Invalid input, must be a valid RACF userid");
         return 1;
     }
 
@@ -68,7 +67,7 @@ int main(int argc, char *argv[])
     racshell::SearOperationInfo op_info = racshell::validate_sear_operation_result(result->result_json);
     if (!op_info.success)
     {
-        std::cerr << op_info.error_message << "\n";
+        racshell::print_error(std::cerr, op_info.error_message);
         racshell::print_sear_errors(op_info.response, std::cerr);
         return 1;
     }
