@@ -33,6 +33,11 @@ inline void print_error_prefix(std::ostream& output) {
     reset_color(output) << ": ";
 }
 
+inline void print_success_prefix(std::ostream& output) {
+    colorize(output, terminal_color::green) << "RACSHELL Success";
+    reset_color(output) << ": ";
+}
+
 inline void add_toggle_argument(argparse::ArgumentParser& program,
                                 const char* short_name,
                                 const char* long_name,

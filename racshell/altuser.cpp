@@ -72,6 +72,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+    racshell::print_success_prefix(std::cout);
     std::cout << "User " << userid << " altered successfully.\n";
     return 0;
 }
