@@ -9,7 +9,7 @@
 
 int main(int argc, char *argv[])
 {
-    argparse::ArgumentParser program("alteruser");
+    argparse::ArgumentParser program("altuser");
 
     program.add_argument("userid")
         .help("RACF userid to alter");
