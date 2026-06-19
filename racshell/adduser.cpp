@@ -57,6 +57,18 @@ int main(int argc, char *argv[])
         std::string key = trait.substr(0, sep);
         std::string value = trait.substr(sep + 1);
 
+        // Parse booleans first (true/false)
+        if (value == "true" || value == "TRUE")
+        {
+            traits[key] = true;
+            continue;
+        }
+        if (value == "false" || value == "FALSE")
+        {
+            traits[key] = false;
+            continue;
+        }
+
         // Try to parse as integer, otherwise keep as string
         try {
             size_t pos; // variable to store the number of characters processed by stoll
