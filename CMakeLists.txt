@@ -36,3 +36,6 @@ target_link_libraries(adduser racshell -static)
 
 add_executable(deleteuser "racshell/deleteuser.cpp")
 target_link_libraries(deleteuser racshell -static)
+
+add_executable(alteruser "racshell/alteruser.cpp")
+target_link_libraries(alteruser racshell -static)
