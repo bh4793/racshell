@@ -42,54 +42,19 @@ int main(int argc, char *argv[])
     bool debug = program.get<bool>("debug");
     bool all_json = program.get<bool>("all-json");
 
-    nlohmann::json traits = nlohmann::json::object();
-    auto trait_args = program.get<std::vector<std::string>>("trait");
-    for (const auto &trait : trait_args)
+    nlohmann::json traits;
+    if (!racshell::parse_traits(program.get<std::vector<std::string>>("trait"), traits))
     {
-        auto sep = trait.find('=');
-        if (sep == std::string::npos)
-        {
-            std::cerr << "\u001b[31mRACSHELL Error\x1b[0m: trait must be in key=value format, got: " << trait << "\n";
-            return 1;
-        }
-
-        std::string key = trait.substr(0, sep);
-        std::string value = trait.substr(sep + 1);
-
-        // Parse booleans first (true/false)
-        if (value == "true" || value == "TRUE")
-        {
-            traits[key] = true;
-            continue;
-        }
-        if (value == "false" || value == "FALSE")
-        {
-            traits[key] = false;
-            continue;
-        }
-
-        // Try to parse as integer, otherwise keep as string
-        try {
-            size_t pos;
-            long long int_val = std::stoll(value, &pos);
-            if (pos == value.size()) {
-                traits[key] = int_val;
-                continue;
-            }
-        } catch (...) {}
-
-        traits[key] = value;
+        return 1;
     }
-
     nlohmann::json req = {
         {"operation", "alter"},
         {"admin_type", "user"},
         {"userid", userid},
-        {"traits", traits}
-    };
+        {"traits", traits}};
 
     std::string request_json = req.dump();
-    
+
     sear_result_t *result = sear(request_json.c_str(), request_json.length(), debug);
 
     if (all_json)
