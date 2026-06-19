@@ -17,6 +17,7 @@ int main(int argc, char *argv[])
 
     racshell::add_toggle_argument(program, "-u", "--users", "list connected users");
     racshell::add_toggle_argument(program, "-o", "--omvs", "list OMVS segment");
+    racshell::add_no_color_argument(program);
     racshell::add_toggle_argument(program, "-d", "--debug", "debug sear request and response");
     racshell::add_toggle_argument(program, "-j", "--json", "output as JSON");
     racshell::add_toggle_argument(program, "-a", "--all-json", "output full raw SEAR JSON response");
@@ -31,6 +32,8 @@ int main(int argc, char *argv[])
         std::cerr << program;
         return 1;
     }
+
+    racshell::set_color_output_enabled(!program.get<bool>("no-color"));
 
     std::string input = program.get<std::string>("group");
 

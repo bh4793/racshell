@@ -18,6 +18,7 @@ int main(int argc, char *argv[])
         .help("trait to set, e.g. base:name='John Doe' omvs:uid=24 omvs:home_directory=/home/USER")
         .nargs(argparse::nargs_pattern::any);
 
+    racshell::add_no_color_argument(program);
     racshell::add_toggle_argument(program, "-d", "--debug", "debug sear request and response");
     racshell::add_toggle_argument(program, "-a", "--all-json", "output full raw SEAR JSON response");
 
@@ -31,6 +32,8 @@ int main(int argc, char *argv[])
         std::cerr << program;
         return 1;
     }
+
+    racshell::set_color_output_enabled(!program.get<bool>("no-color"));
 
     std::string userid = program.get<std::string>("userid");
 

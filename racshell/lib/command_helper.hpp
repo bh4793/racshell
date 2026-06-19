@@ -20,11 +20,26 @@ inline constexpr std::string_view blue = "\x1b[34m";
 
 }  // namespace terminal_color
 
+inline bool& color_output_enabled() {
+    static bool enabled = true;
+    return enabled;
+}
+
+inline void set_color_output_enabled(bool enabled) {
+    color_output_enabled() = enabled;
+}
+
 inline std::ostream& colorize(std::ostream& output, std::string_view color) {
+    if (!color_output_enabled()) {
+        return output;
+    }
     return output << color;
 }
 
 inline std::ostream& reset_color(std::ostream& output) {
+    if (!color_output_enabled()) {
+        return output;
+    }
     return output << terminal_color::reset;
 }
 
@@ -52,6 +67,10 @@ inline void add_toggle_argument(argparse::ArgumentParser& program,
         .default_value(false)
         .implicit_value(true)
         .nargs(0);
+}
+
+inline void add_no_color_argument(argparse::ArgumentParser& program) {
+    add_toggle_argument(program, "-n", "--no-color", "disable colored output");
 }
 
 struct SearResponseInfo {
