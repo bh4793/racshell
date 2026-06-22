@@ -14,6 +14,7 @@ The following commands are currently implemented in `racshell/`.
 | `altuser` | User | Alter RACF user | `--trait`, `--debug`, `--all-json`, `--no-color` |
 | `deleteuser` | User | Delete RACF user | `--debug`, `--all-json`, `--no-color` |
 | `listuser` | User | Display RACF user details | `--groups`, `--tso`, `--kerberos`, `--cics`, `--omvs`, `--security`, `--json`, `--all-json`, `--debug`, `--no-color` |
+| `addgroup` | Group | Create RACF group | `--trait`, `--debug`, `--all-json`, `--no-color` |
 | `listgrp` | Group | Display RACF group details | `--users`, `--omvs`, `--json`, `--all-json`, `--debug`, `--no-color` |
 
 ## User Commands
@@ -88,6 +89,21 @@ Options:
 ### Group Commands
 
 Group administration and lookup commands.
+
+### addgroup
+
+Create a RACF group.
+
+Usage:
+
+`addgroup <group> [options]`
+
+Options:
+
+- `-t, --trait` trait to set (repeatable), e.g. `base:owner=SYS1 base:superior_group=SYS1`
+- `-n, --no-color` disable colored output
+- `-d, --debug` debug SEAR request and response
+- `-a, --all-json` output full raw SEAR JSON response
 
 ### listgrp
 
