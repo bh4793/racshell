@@ -90,9 +90,10 @@ int main(int argc, char *argv[])
         user_data.userid = input;
         racshell::assign_string(base, "base:name", user_data.name);
         racshell::assign_string(base, "base:owner", user_data.owner);
+        racshell::assign_string(base, "base:default_group", user_data.owner);
         racshell::assign_string(base, "base:create_date", user_data.created_date);
         racshell::assign_bool(base, "base:revoked", user_data.revoked);
-        racshell::assign_string(base, "base:default_group", user_data.owner); // Default group is often the same as owner, but not always. Include it as a trait for completeness, but also include in output for easy visibility since it's a common point of confusion
+        
 
         user_data.security = nlohmann::json::object();
 
