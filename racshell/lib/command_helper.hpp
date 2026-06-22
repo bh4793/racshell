@@ -161,6 +161,68 @@ struct SearOperationInfo {
 };
 
 /**
+ * @brief Canonical SEAR/RACF return code bundle.
+ */
+struct SearReturnCodes {
+    int sear_rc = 0;
+    int saf_rc = 0;
+    int racf_rc = 0;
+    int racf_reason = 0;
+};
+
+/**
+ * @brief Parses a SEAR response JSON document.
+ * @param result_json Raw response string.
+ * @param response Parsed JSON output on success.
+ * @param error_message Populated parse error text on failure.
+ * @return True when JSON parsing succeeds.
+ */
+inline bool parse_sear_response_json(const char* result_json,
+                                     nlohmann::json& response,
+                                     std::string& error_message) {
+    try {
+        response = nlohmann::json::parse(result_json);
+        return true;
+    } catch (const std::exception& e) {
+        error_message = std::string("Failed to parse SEAR response: ") + e.what();
+        return false;
+    }
+}
+
+/**
+ * @brief Extracts return-code fields from a SEAR response.
+ * @param response Parsed response object.
+ * @return Return-code bundle with missing values defaulted to zero.
+ */
+inline SearReturnCodes extract_sear_return_codes(const nlohmann::json& response) {
+    const nlohmann::json return_codes = response.value("return_codes", nlohmann::json::object());
+    return {
+        return_codes.value("sear_return_code", 0),
+        return_codes.value("saf_return_code", 0),
+        return_codes.value("racf_return_code", 0),
+        return_codes.value("racf_reason_code", 0)
+    };
+}
+
+/**
+ * @brief Validates that the SEAR/RACF return codes indicate success.
+ * @param codes Return-code bundle.
+ * @param error_message Populated failure details when any code indicates error.
+ * @return True when the operation is successful.
+ */
+inline bool validate_sear_return_codes(const SearReturnCodes& codes, std::string& error_message) {
+    if (codes.sear_rc == 0 && codes.saf_rc == 0 && codes.racf_rc == 0) {
+        return true;
+    }
+
+    error_message = "request failed (sear=" + std::to_string(codes.sear_rc)
+        + ", saf=" + std::to_string(codes.saf_rc)
+        + ", racf=" + std::to_string(codes.racf_rc)
+        + ", reason=" + std::to_string(codes.racf_reason) + ")";
+    return false;
+}
+
+/**
  * @brief Validates an operation-style SEAR response.
  * @param result_json Raw SEAR response JSON string.
  * @return Populated operation info including success state and parsed response.
@@ -168,31 +230,19 @@ struct SearOperationInfo {
 inline SearOperationInfo validate_sear_operation_result(const char* result_json) {
     SearOperationInfo info;
     info.success = false;
+    info.response = nlohmann::json::object();
 
-    try {
-        nlohmann::json response = nlohmann::json::parse(result_json);
-        nlohmann::json return_codes = response.value("return_codes", nlohmann::json::object());
-        int sear_rc = return_codes.value("sear_return_code", 0);
-        int saf_rc = return_codes.value("saf_return_code", 0);
-        int racf_rc = return_codes.value("racf_return_code", 0);
-        int racf_reason = return_codes.value("racf_reason_code", 0);
-
-        if (sear_rc != 0 || saf_rc != 0 || racf_rc != 0) {
-            info.error_message = "request failed (sear=" + std::to_string(sear_rc)
-                + ", saf=" + std::to_string(saf_rc)
-                + ", racf=" + std::to_string(racf_rc)
-                + ", reason=" + std::to_string(racf_reason) + ")";
-            info.response = response;
-            return info;
-        }
-
-        info.success = true;
-        info.response = response;
-        return info;
-    } catch (const std::exception& e) {
-        info.error_message = std::string("Failed to parse SEAR response: ") + e.what();
+    if (!parse_sear_response_json(result_json, info.response, info.error_message)) {
         return info;
     }
+
+    const SearReturnCodes codes = extract_sear_return_codes(info.response);
+    if (!validate_sear_return_codes(codes, info.error_message)) {
+        return info;
+    }
+
+    info.success = true;
+    return info;
 }
 
 /**
@@ -219,43 +269,34 @@ inline void print_sear_errors(const nlohmann::json& response, std::ostream& outp
 inline SearResponseInfo validate_sear_response(const char* result_json, const std::string& entity_type) {
     SearResponseInfo info;
     info.success = false;
-    
-    try {
-        nlohmann::json response = nlohmann::json::parse(result_json);
-        
-        // Extract return codes
-        nlohmann::json return_codes = response.value("return_codes", nlohmann::json::object());
-        int sear_rc = return_codes.value("sear_return_code", 0);
-        int saf_rc = return_codes.value("saf_return_code", 0);
-        int racf_rc = return_codes.value("racf_return_code", 0);
-        int racf_reason = return_codes.value("racf_reason_code", 0);
 
-        if (sear_rc != 0 || saf_rc != 0 || racf_rc != 0) {
-            info.error_message = "request failed (sear=" + std::to_string(sear_rc)
-                + ", saf=" + std::to_string(saf_rc)
-                + ", racf=" + std::to_string(racf_rc)
-                + ", reason=" + std::to_string(racf_reason) + ")";
-            return info;
-        }
-
-        // Check profile and base structure
-        nlohmann::json profile = response.value("profile", nlohmann::json::object());
-        nlohmann::json base = profile.value("base", nlohmann::json::object());
-
-        if (!response.contains("profile") || !profile.is_object() || 
-            !profile.contains("base") || !base.is_object()) {
-            info.error_message = entity_type + " not found or missing profile data";
-            return info;
-        }
-
-        info.success = true;
-        info.profile = profile;
-        info.base = base;
-        return info;
-    } catch (const std::exception& e) {
-        info.error_message = std::string("Failed to parse SEAR response: ") + e.what();
+    nlohmann::json response;
+    if (!parse_sear_response_json(result_json, response, info.error_message)) {
         return info;
     }
+
+    const SearReturnCodes codes = extract_sear_return_codes(response);
+    if (!validate_sear_return_codes(codes, info.error_message)) {
+        return info;
+    }
+
+    // Check profile and base structure
+    const auto profile_it = response.find("profile");
+    if (profile_it == response.end() || !profile_it->is_object()) {
+        info.error_message = entity_type + " not found or missing profile data";
+        return info;
+    }
+
+    const auto base_it = profile_it->find("base");
+    if (base_it == profile_it->end() || !base_it->is_object()) {
+        info.error_message = entity_type + " not found or missing profile data";
+        return info;
+    }
+
+    info.success = true;
+    info.profile = *profile_it;
+    info.base = *base_it;
+    return info;
 }
 
 /**
