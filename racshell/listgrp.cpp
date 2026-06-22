@@ -10,7 +10,7 @@
 
 int main(int argc, char *argv[])
 {
-    argparse::ArgumentParser program("listgrp");
+    argparse::ArgumentParser program("listgroup");
 
     program.add_argument("group")
         .help("RACF group to list");

@@ -16,7 +16,7 @@ The following commands are currently implemented in `racshell/`.
 | `listuser` | User | Display RACF user details | `--groups`, `--tso`, `--kerberos`, `--cics`, `--omvs`, `--security`, `--json`, `--all-json`, `--debug`, `--no-color` |
 | `addgroup` | Group | Create RACF group | `--traits`, `--debug`, `--all-json`, `--no-color` |
 | `deletegroup` | Group | Delete RACF group | `--debug`, `--all-json`, `--no-color` |
-| `listgrp` | Group | Display RACF group details | `--users`, `--omvs`, `--json`, `--all-json`, `--debug`, `--no-color` |
+| `listgroup` | Group | Display RACF group details | `--users`, `--omvs`, `--json`, `--all-json`, `--debug`, `--no-color` |
 
 ## User Commands
 
@@ -120,13 +120,13 @@ Options:
 - `-d, --debug` debug SEAR request and response
 - `-a, --all-json` output full raw SEAR JSON response
 
-### listgrp
+### listgroup
 
 Extract and display RACF group details.
 
 Usage:
 
-`listgrp <group> [options]`
+`listgroup <group> [options]`
 
 Options:
 
