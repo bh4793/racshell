@@ -12,23 +12,58 @@ namespace racshell {
 
 namespace terminal_color {
 
+/**
+ * @brief ANSI reset sequence.
+ */
 inline constexpr std::string_view reset = "\x1b[0m";
+
+/**
+ * @brief ANSI red foreground sequence.
+ */
 inline constexpr std::string_view red = "\x1b[31m";
+
+/**
+ * @brief ANSI green foreground sequence.
+ */
 inline constexpr std::string_view green = "\x1b[32m";
+
+/**
+ * @brief ANSI yellow foreground sequence.
+ */
 inline constexpr std::string_view yellow = "\x1b[33m";
+
+/**
+ * @brief ANSI blue foreground sequence.
+ */
 inline constexpr std::string_view blue = "\x1b[34m";
 
 }  // namespace terminal_color
 
+/**
+ * @brief Accesses the process-wide color output toggle.
+ * @return Reference to the color-enabled state.
+ *
+ * The variable is initialized to true once and remains allocated until process exit; its value may be changed during execution by calling set_color_output_enabled(bool enabled).
+ */
 inline bool& color_output_enabled() {
     static bool enabled = true;
     return enabled;
 }
 
+/**
+ * @brief Enables or disables ANSI color output globally.
+ * @param enabled True to emit color sequences, false to suppress them.
+ */
 inline void set_color_output_enabled(bool enabled) {
     color_output_enabled() = enabled;
 }
 
+/**
+ * @brief Writes a color sequence to the output stream when colors are enabled.
+ * @param output Stream to write to.
+ * @param color ANSI color escape sequence.
+ * @return The same output stream for chaining.
+ */
 inline std::ostream& colorize(std::ostream& output, std::string_view color) {
     if (!color_output_enabled()) {
         return output;
@@ -36,6 +71,11 @@ inline std::ostream& colorize(std::ostream& output, std::string_view color) {
     return output << color;
 }
 
+/**
+ * @brief Writes the ANSI reset sequence when colors are enabled.
+ * @param output Stream to write to.
+ * @return The same output stream for chaining.
+ */
 inline std::ostream& reset_color(std::ostream& output) {
     if (!color_output_enabled()) {
         return output;
@@ -43,21 +83,45 @@ inline std::ostream& reset_color(std::ostream& output) {
     return output << terminal_color::reset;
 }
 
+/**
+ * @brief Prints a standardized error prefix.
+ * @param output Stream to write to.
+ *
+ * Output format: "RACSHELL Error: " where "RACSHELL Error" is red when enabled; everything after (colon, space, and any subsequent text) is default color.
+ */
 inline void print_error_prefix(std::ostream& output) {
     colorize(output, terminal_color::red) << "RACSHELL Error";
     reset_color(output) << ": ";
 }
 
+/**
+ * @brief Prints a full standardized error line.
+ * @param output Stream to write to.
+ * @param message Error message text without prefix.
+ */
 inline void print_error(std::ostream& output, const std::string& message) {
     print_error_prefix(output);
     output << message << "\n";
 }
 
+/**
+ * @brief Prints a standardized success prefix.
+ * @param output Stream to write to.
+ *
+ * Output format: "RACSHELL Success: " where "RACSHELL Success" is green when enabled; everything after (colon, space, and any subsequent text) is default color.
+ */
 inline void print_success_prefix(std::ostream& output) {
     colorize(output, terminal_color::green) << "RACSHELL Success";
     reset_color(output) << ": ";
 }
 
+/**
+ * @brief Adds a conventional boolean toggle argument to an argparse program.
+ * @param program Target argument parser.
+ * @param short_name Short flag form, e.g. "-d".
+ * @param long_name Long flag form, e.g. "--debug".
+ * @param help_text Help text for the argument.
+ */
 inline void add_toggle_argument(argparse::ArgumentParser& program,
                                 const char* short_name,
                                 const char* long_name,
@@ -69,10 +133,17 @@ inline void add_toggle_argument(argparse::ArgumentParser& program,
         .nargs(0);
 }
 
+/**
+ * @brief Adds the -n/--no-color flag to a command.
+ * @param program Target argument parser.
+ */
 inline void add_no_color_argument(argparse::ArgumentParser& program) {
     add_toggle_argument(program, "-n", "--no-color", "disable colored output");
 }
 
+/**
+ * @brief Parsed response details for extract-style SEAR operations.
+ */
 struct SearResponseInfo {
     bool success;
     std::string error_message;
@@ -80,12 +151,20 @@ struct SearResponseInfo {
     nlohmann::json base;
 };
 
+/**
+ * @brief Parsed response details for add/alter/delete-style SEAR operations.
+ */
 struct SearOperationInfo {
     bool success;
     std::string error_message;
     nlohmann::json response;
 };
 
+/**
+ * @brief Validates an operation-style SEAR response.
+ * @param result_json Raw SEAR response JSON string.
+ * @return Populated operation info including success state and parsed response.
+ */
 inline SearOperationInfo validate_sear_operation_result(const char* result_json) {
     SearOperationInfo info;
     info.success = false;
@@ -116,6 +195,11 @@ inline SearOperationInfo validate_sear_operation_result(const char* result_json)
     }
 }
 
+/**
+ * @brief Prints each string entry from the SEAR "errors" array.
+ * @param response Parsed SEAR response object.
+ * @param output Stream to write to.
+ */
 inline void print_sear_errors(const nlohmann::json& response, std::ostream& output) {
     if (response.contains("errors") && response["errors"].is_array()) {
         for (const auto& err : response["errors"]) {
@@ -127,8 +211,10 @@ inline void print_sear_errors(const nlohmann::json& response, std::ostream& outp
 }
 
 /**
- * Validate and extract profile/base from SEAR response JSON string
- * Parses the JSON and checks return codes and structure validity
+ * @brief Validates and extracts profile/base from an extract-style SEAR response.
+ * @param result_json Raw SEAR response JSON string.
+ * @param entity_type Logical entity name used in error messages.
+ * @return Populated extract response info with success state and payload objects.
  */
 inline SearResponseInfo validate_sear_response(const char* result_json, const std::string& entity_type) {
     SearResponseInfo info;
@@ -173,9 +259,15 @@ inline SearResponseInfo validate_sear_response(const char* result_json, const st
 }
 
 /**
- * Parse a list of "key=value" trait strings into a JSON object.
- * Detects booleans (true/false), integers, and falls back to strings.
- * Returns false and writes an error to stderr if a value is malformed.
+ * @brief Parses trait arguments into a JSON object.
+ * @param trait_args Input list of values in key=value format.
+ * @param traits Output JSON object with parsed values.
+ * @return True on success; false when an input item is malformed.
+ *
+ * Value coercion order:
+ * 1. case-insensitive booleans (true/false)
+ * 2. integers via std::stoll
+ * 3. fallback to string
  */
 inline bool parse_traits(const std::vector<std::string>& trait_args, nlohmann::json& traits) {
     traits = nlohmann::json::object();
@@ -208,7 +300,10 @@ inline bool parse_traits(const std::vector<std::string>& trait_args, nlohmann::j
 }
 
 /**
- * Safe string extraction from JSON object
+ * @brief Safely extracts a string property from a JSON object.
+ * @param obj Source JSON object.
+ * @param key Property name.
+ * @param out Destination variable updated when the key exists and is a string.
  */
 inline void assign_string(const nlohmann::json& obj, const char* key, std::string& out) {
     auto element = obj.find(key);
@@ -218,7 +313,10 @@ inline void assign_string(const nlohmann::json& obj, const char* key, std::strin
 }
 
 /**
- * Safe boolean extraction from JSON object
+ * @brief Safely extracts a boolean property from a JSON object.
+ * @param obj Source JSON object.
+ * @param key Property name.
+ * @param out Destination variable updated when the key exists and is a boolean.
  */
 inline void assign_bool(const nlohmann::json& obj, const char* key, bool& out) {
     auto element = obj.find(key);
