@@ -1,5 +1,29 @@
 #include "output_formatter.hpp"
+#include <cctype>
 #include <sstream>
+
+namespace {
+
+std::string format_security_key(std::string key) {
+    const std::string::size_type separator_pos = key.find_last_of(':');
+    if (separator_pos != std::string::npos) {
+        key = key.substr(separator_pos + 1);
+    }
+
+    for (char& c : key) {
+        if (c == '_') {
+            c = ' ';
+        }
+    }
+
+    if (!key.empty()) {
+        key[0] = static_cast<char>(std::toupper(static_cast<unsigned char>(key[0])));
+    }
+
+    return key;
+}
+
+}  // namespace
 
 std::string TextFormatter::format(const UserData& user) {
     std::stringstream ss;
@@ -24,7 +48,7 @@ std::string TextFormatter::format(const UserData& user) {
     if (!user.security.is_null() && !user.security.empty()) {
         ss << "Security:\n";
         for (auto it = user.security.begin(); it != user.security.end(); ++it) {
-            ss << "  " << it.key() << ": ";
+            ss << "  " << format_security_key(it.key()) << ": ";
             if (it.value().is_string()) {
                 ss << it.value().get<std::string>() << "\n";
             } else {
