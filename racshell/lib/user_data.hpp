@@ -12,6 +12,7 @@ struct UserData {
     std::string created_date;
     bool revoked = false;
     std::vector<std::string> groups;
+    nlohmann::json security;
     nlohmann::json tso;
     nlohmann::json omvs;
     nlohmann::json kerberos;

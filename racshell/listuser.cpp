@@ -92,6 +92,39 @@ int main(int argc, char *argv[])
         racshell::assign_string(base, "base:owner", user_data.owner);
         racshell::assign_string(base, "base:create_date", user_data.created_date);
         racshell::assign_bool(base, "base:revoked", user_data.revoked);
+        racshell::assign_string(base, "base:default_group", user_data.owner); // Default group is often the same as owner, but not always. Include it as a trait for completeness, but also include in output for easy visibility since it's a common point of confusion
+
+        user_data.security = nlohmann::json::object();
+
+        const std::vector<std::string> base_security_keys = {
+            "base:resume_date",
+            "base:password_change_date",
+            "base:password_change_interval",
+            "base:password_expired",
+            "base:passphrase_change_date",
+            "base:passphrase_change_interval",
+            "base:has_passphrase",
+            "base:has_password",
+            "base:special",
+            "base:operations",
+            "base:auditor",
+            "base:read_only_auditor",
+            "base:protected",
+            "base:restrict_global_access_checking",
+            "base:last_access_date",
+            "base:installation_data"
+        };
+
+        for (const auto& key : base_security_keys) {
+            const auto element = base.find(key);
+            if (element != base.end()) {
+                user_data.security[key] = *element;
+            }
+        }
+
+        if (profile.contains("mfa")) {
+            user_data.security["mfa"] = profile["mfa"];
+        }
 
         if (groups && base.contains("base:group_connections"))
         {

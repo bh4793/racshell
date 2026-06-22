@@ -12,6 +12,10 @@ std::string JsonFormatter::format(const UserData& user) {
     if (!user.groups.empty()) {
         output["groups"] = user.groups;
     }
+
+    if (!user.security.is_null() && !user.security.empty()) {
+        output["security"] = user.security;
+    }
     
     if (!user.tso.is_null() && !user.tso.empty()) {
         output["tso"] = user.tso;

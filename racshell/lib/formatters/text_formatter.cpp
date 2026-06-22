@@ -20,6 +20,18 @@ std::string TextFormatter::format(const UserData& user) {
         }
         ss << "\n";
     }
+
+    if (!user.security.is_null() && !user.security.empty()) {
+        ss << "Security:\n";
+        for (auto it = user.security.begin(); it != user.security.end(); ++it) {
+            ss << "  " << it.key() << ": ";
+            if (it.value().is_string()) {
+                ss << it.value().get<std::string>() << "\n";
+            } else {
+                ss << it.value().dump() << "\n";
+            }
+        }
+    }
     
     if (!user.tso.is_null() && !user.tso.empty()) {
         ss << "TSO:\n";
