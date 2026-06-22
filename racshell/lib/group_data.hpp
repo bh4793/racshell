@@ -5,12 +5,14 @@
 #include <vector>
 #include <nlohmann/json.hpp>
 
-struct GroupUser {
+struct GroupUser
+{
     std::string userid;
     std::string authority;
 };
 
-struct GroupData {
+struct GroupData
+{
     std::string groupid;
     std::string owner;
     std::string created_date;

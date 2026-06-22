@@ -64,7 +64,6 @@ int main(int argc, char *argv[])
         bool json_output = program.get<bool>("json");
         bool all_json = program.get<bool>("all-json");
 
-
         // extract user information
         nlohmann::json req = {
             {"operation", "extract"},
@@ -81,7 +80,8 @@ int main(int argc, char *argv[])
         }
 
         racshell::SearResponseInfo sear_info = racshell::validate_sear_response(result->result_json, "user");
-        if (!sear_info.success) {
+        if (!sear_info.success)
+        {
             racshell::print_error(std::cerr, sear_info.error_message);
             return 1;
         }
@@ -96,7 +96,8 @@ int main(int argc, char *argv[])
         racshell::assign_string(base, "base:create_date", user_data.created_date);
         racshell::assign_bool(base, "base:revoked", user_data.revoked);
 
-        if (security) {
+        if (security)
+        {
             user_data.security = nlohmann::json::object();
 
             const std::vector<std::string> base_security_keys = {
@@ -115,17 +116,19 @@ int main(int argc, char *argv[])
                 "base:protected",
                 "base:restrict_global_access_checking",
                 "base:last_access_date",
-                "base:installation_data"
-            };
+                "base:installation_data"};
 
-            for (const auto& key : base_security_keys) {
+            for (const auto &key : base_security_keys)
+            {
                 const auto element = base.find(key);
-                if (element != base.end()) {
+                if (element != base.end())
+                {
                     user_data.security[key] = *element;
                 }
             }
 
-            if (profile.contains("mfa")) {
+            if (profile.contains("mfa"))
+            {
                 user_data.security["mfa"] = profile["mfa"];
             }
         }

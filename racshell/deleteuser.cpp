@@ -43,8 +43,7 @@ int main(int argc, char *argv[])
     nlohmann::json req = {
         {"operation", "delete"},
         {"admin_type", "user"},
-        {"userid", userid}
-    };
+        {"userid", userid}};
 
     std::string request_json = req.dump();
     sear_result_t *result = sear(request_json.c_str(), request_json.length(), debug);

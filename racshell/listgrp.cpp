@@ -66,7 +66,8 @@ int main(int argc, char *argv[])
         }
 
         racshell::SearResponseInfo sear_info = racshell::validate_sear_response(result->result_json, "group");
-        if (!sear_info.success) {
+        if (!sear_info.success)
+        {
             racshell::print_error(std::cerr, sear_info.error_message);
             return 1;
         }

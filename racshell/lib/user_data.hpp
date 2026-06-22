@@ -5,7 +5,8 @@
 #include <vector>
 #include <nlohmann/json.hpp>
 
-struct UserData {
+struct UserData
+{
     std::string userid;
     std::string name;
     std::string owner;
