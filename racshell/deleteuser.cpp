@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
     }
     catch (const std::exception &err)
     {
-        std::cerr << err.what() << std::endl;
+        racshell::print_error(std::cerr, err.what());
         std::cerr << program;
         return 1;
     }
