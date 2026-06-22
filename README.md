@@ -15,6 +15,7 @@ The following commands are currently implemented in `racshell/`.
 | `deleteuser` | User | Delete RACF user | `--debug`, `--all-json`, `--no-color` |
 | `listuser` | User | Display RACF user details | `--groups`, `--tso`, `--kerberos`, `--cics`, `--omvs`, `--security`, `--json`, `--all-json`, `--debug`, `--no-color` |
 | `addgroup` | Group | Create RACF group | `--traits`, `--debug`, `--all-json`, `--no-color` |
+| `deletegroup` | Group | Delete RACF group | `--debug`, `--all-json`, `--no-color` |
 | `listgrp` | Group | Display RACF group details | `--users`, `--omvs`, `--json`, `--all-json`, `--debug`, `--no-color` |
 
 ## User Commands
@@ -101,6 +102,20 @@ Usage:
 Options:
 
 - `-t, --traits` traits to set (repeatable), e.g. `base:owner=SYS1 base:superior_group=SYS1`
+- `-n, --no-color` disable colored output
+- `-d, --debug` debug SEAR request and response
+- `-a, --all-json` output full raw SEAR JSON response
+
+### deletegroup
+
+Delete a RACF group.
+
+Usage:
+
+`deletegroup <group> [options]`
+
+Options:
+
 - `-n, --no-color` disable colored output
 - `-d, --debug` debug SEAR request and response
 - `-a, --all-json` output full raw SEAR JSON response
