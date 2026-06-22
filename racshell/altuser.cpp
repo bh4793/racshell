@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
         .help("RACF userid to alter");
 
     program.add_argument("-t", "--traits")
-        .help("trait to alter, e.g. base:name='LEONARD CARCARAMO' base:special=true")
+        .help("traits to alter, e.g. base:name='LEONARD CARCARAMO' base:special=true")
         .nargs(argparse::nargs_pattern::any);
 
     racshell::add_no_color_argument(program);

@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
         .help("RACF group to create");
 
     program.add_argument("-t", "--traits")
-        .help("trait to set, e.g. base:owner=SYS1 base:superior_group=SYS1")
+        .help("traits to set, e.g. base:owner=SYS1 base:superior_group=SYS1")
         .nargs(argparse::nargs_pattern::any);
 
     racshell::add_no_color_argument(program);

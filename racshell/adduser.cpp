@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
         .help("RACF userid to create");
 
     program.add_argument("-t", "--traits")
-        .help("trait to set, e.g. base:name='John Doe' omvs:uid=24 omvs:home_directory=/home/USER")
+        .help("traits to set, e.g. base:name='John Doe' omvs:uid=24 omvs:home_directory=/home/USER")
         .nargs(argparse::nargs_pattern::any);
 
     racshell::add_no_color_argument(program);

@@ -331,7 +331,7 @@ namespace racshell
     }
 
     /**
-     * @brief Parses trait arguments into a JSON object.
+     * @brief Parses traits arguments into a JSON object.
      * @param trait_args Input list of values in key=value format.
      * @param traits Output JSON object with parsed values.
      * @return True on success; false when an input item is malformed.
