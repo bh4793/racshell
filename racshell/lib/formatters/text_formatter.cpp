@@ -43,16 +43,11 @@ std::string TextFormatter::format(const UserData &user)
 
     if (!user.groups.empty())
     {
-        ss << "Groups: ";
-        for (size_t i = 0; i < user.groups.size(); ++i)
+        ss << "Groups:\n";
+        for (const auto &group : user.groups)
         {
-            ss << user.groups[i];
-            if (i < user.groups.size() - 1)
-            {
-                ss << ", ";
-            }
+            ss << "  " << group << "\n";
         }
-        ss << "\n";
     }
 
     if (!user.security.is_null() && !user.security.empty())
