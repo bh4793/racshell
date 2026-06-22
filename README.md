@@ -10,11 +10,11 @@ The following commands are currently implemented in `racshell/`.
 
 | Command | Category | Purpose | Key Options |
 | --- | --- | --- | --- |
-| `adduser` | User | Create RACF user | `--trait`, `--debug`, `--all-json`, `--no-color` |
-| `altuser` | User | Alter RACF user | `--trait`, `--debug`, `--all-json`, `--no-color` |
+| `adduser` | User | Create RACF user | `--traits`, `--debug`, `--all-json`, `--no-color` |
+| `altuser` | User | Alter RACF user | `--traits`, `--debug`, `--all-json`, `--no-color` |
 | `deleteuser` | User | Delete RACF user | `--debug`, `--all-json`, `--no-color` |
 | `listuser` | User | Display RACF user details | `--groups`, `--tso`, `--kerberos`, `--cics`, `--omvs`, `--security`, `--json`, `--all-json`, `--debug`, `--no-color` |
-| `addgroup` | Group | Create RACF group | `--trait`, `--debug`, `--all-json`, `--no-color` |
+| `addgroup` | Group | Create RACF group | `--traits`, `--debug`, `--all-json`, `--no-color` |
 | `listgrp` | Group | Display RACF group details | `--users`, `--omvs`, `--json`, `--all-json`, `--debug`, `--no-color` |
 
 ## User Commands
@@ -31,7 +31,7 @@ Usage:
 
 Options:
 
-- `-t, --trait` trait to set (repeatable), e.g. `base:name='John Doe' omvs:uid=24`
+- `-t, --traits` traits to set (repeatable), e.g. `base:name='John Doe' omvs:uid=24`
 - `-n, --no-color` disable colored output
 - `-d, --debug` debug SEAR request and response
 - `-a, --all-json` output full raw SEAR JSON response
@@ -46,7 +46,7 @@ Usage:
 
 Options:
 
-- `-t, --trait` trait to alter (repeatable), e.g. `base:name='LEONARD CARCARAMO' base:special=true`
+- `-t, --traits` traits to alter (repeatable), e.g. `base:name='LEONARD CARCARAMO' base:special=true`
 - `-n, --no-color` disable colored output
 - `-d, --debug` debug SEAR request and response
 - `-a, --all-json` output full raw SEAR JSON response
@@ -100,7 +100,7 @@ Usage:
 
 Options:
 
-- `-t, --trait` trait to set (repeatable), e.g. `base:owner=SYS1 base:superior_group=SYS1`
+- `-t, --traits` traits to set (repeatable), e.g. `base:owner=SYS1 base:superior_group=SYS1`
 - `-n, --no-color` disable colored output
 - `-d, --debug` debug SEAR request and response
 - `-a, --all-json` output full raw SEAR JSON response

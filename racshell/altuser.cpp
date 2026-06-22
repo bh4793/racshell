@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
     program.add_argument("userid")
         .help("RACF userid to alter");
 
-    program.add_argument("-t", "--trait")
+    program.add_argument("-t", "--traits")
         .help("trait to alter, e.g. base:name='LEONARD CARCARAMO' base:special=true")
         .nargs(argparse::nargs_pattern::any);
 
@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
     bool all_json = program.get<bool>("all-json");
 
     nlohmann::json traits;
-    if (!racshell::parse_traits(program.get<std::vector<std::string>>("trait"), traits))
+    if (!racshell::parse_traits(program.get<std::vector<std::string>>("traits"), traits))
     {
         return 1;
     }

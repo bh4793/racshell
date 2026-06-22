@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
     program.add_argument("userid")
         .help("RACF userid to create");
 
-    program.add_argument("-t", "--trait")
+    program.add_argument("-t", "--traits")
         .help("trait to set, e.g. base:name='John Doe' omvs:uid=24 omvs:home_directory=/home/USER")
         .nargs(argparse::nargs_pattern::any);
 
@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
     bool all_json = program.get<bool>("all-json");
 
     nlohmann::json traits;
-    if (!racshell::parse_traits(program.get<std::vector<std::string>>("trait"), traits))
+    if (!racshell::parse_traits(program.get<std::vector<std::string>>("traits"), traits))
     {
         return 1;
     }
