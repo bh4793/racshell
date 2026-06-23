@@ -22,7 +22,7 @@ The following commands are currently implemented in `racshell/`.
 | `listgroup` | Group | Display RACF group details | `--users`, `--omvs`, `--json`, `--all-json`, `--debug`, `--no-color` |
 | `adddataset` | Dataset | Create RACF dataset profile | `--generic`, `--traits`, `--debug`, `--all-json`, `--no-color` |
 | `deletedataset` | Dataset | Delete RACF dataset profile | `--generic`, `--debug`, `--all-json`, `--no-color` |
-| `listdataset` | Dataset | Display RACF dataset profile details | `--generic`, `--debug`, `--all-json`, `--no-color` |
+| `listdataset` | Dataset | Display RACF dataset profile details | `--generic`, `--json`, `--debug`, `--all-json`, `--no-color` |
 
 ## User Commands
 
@@ -219,6 +219,7 @@ Options:
 - `-g, --generic` treat the dataset name as a generic profile
 - `-n, --no-color` disable colored output
 - `-d, --debug` debug SEAR request and response
+- `-j, --json` output as JSON
 - `-a, --all-json` output full raw SEAR JSON response
 
 ### listdataset
