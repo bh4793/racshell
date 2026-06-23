@@ -58,6 +58,9 @@ target_link_libraries(remove racshell -static)
 add_executable(adddataset "racshell/adddataset.cpp")
 target_link_libraries(adddataset racshell -static)
 
+add_executable(deletedataset "racshell/deletedataset.cpp")
+target_link_libraries(deletedataset racshell -static)
+
 add_custom_target(
     racshell_commands
     DEPENDS
@@ -72,4 +75,5 @@ add_custom_target(
     connect
     remove
     adddataset
+    deletedataset
 )

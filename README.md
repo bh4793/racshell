@@ -21,6 +21,7 @@ The following commands are currently implemented in `racshell/`.
 | `remove` | Group | Remove user from RACF group | `--debug`, `--all-json`, `--no-color` |
 | `listgroup` | Group | Display RACF group details | `--users`, `--omvs`, `--json`, `--all-json`, `--debug`, `--no-color` |
 | `adddataset` | Dataset | Create RACF dataset profile | `--generic`, `--traits`, `--debug`, `--all-json`, `--no-color` |
+| `deletedataset` | Dataset | Delete RACF dataset profile | `--generic`, `--debug`, `--all-json`, `--no-color` |
 
 ## User Commands
 
@@ -200,6 +201,21 @@ Options:
 
 - `-t, --traits` traits to set (repeatable), e.g. `base:universal_access=None base:owner=eswift`
 - `-g, --generic` treat the dataset name as a generic profile (e.g. `ESWIFT.TEST.**`)
+- `-n, --no-color` disable colored output
+- `-d, --debug` debug SEAR request and response
+- `-a, --all-json` output full raw SEAR JSON response
+
+### deletedataset
+
+Delete a RACF dataset profile.
+
+Usage:
+
+`deletedataset <dataset> [options]`
+
+Options:
+
+- `-g, --generic` treat the dataset name as a generic profile
 - `-n, --no-color` disable colored output
 - `-d, --debug` debug SEAR request and response
 - `-a, --all-json` output full raw SEAR JSON response
