@@ -20,6 +20,7 @@ The following commands are currently implemented in `racshell/`.
 | `connect` | Group | Connect user to RACF group | `--traits`, `--debug`, `--all-json`, `--no-color` |
 | `remove` | Group | Remove user from RACF group | `--debug`, `--all-json`, `--no-color` |
 | `listgroup` | Group | Display RACF group details | `--users`, `--omvs`, `--json`, `--all-json`, `--debug`, `--no-color` |
+| `adddataset` | Dataset | Create RACF dataset profile | `--generic`, `--traits`, `--debug`, `--all-json`, `--no-color` |
 
 ## User Commands
 
@@ -137,6 +138,23 @@ Options:
 - `-d, --debug` debug SEAR request and response
 - `-a, --all-json` output full raw SEAR JSON response
 
+### listgroup
+
+Extract and display RACF group details.
+
+Usage:
+
+`listgroup <group> [options]`
+
+Options:
+
+- `-u, --users` list connected users
+- `-o, --omvs` list OMVS segment
+- `-n, --no-color` disable colored output
+- `-d, --debug` debug SEAR request and response
+- `-j, --json` output as JSON
+- `-a, --all-json` output full raw SEAR JSON response
+
 ### connect
 
 Connect a RACF user to a RACF group.
@@ -166,19 +184,24 @@ Options:
 - `-d, --debug` debug SEAR request and response
 - `-a, --all-json` output full raw SEAR JSON response
 
-### listgroup
+## Dataset Commands
 
-Extract and display RACF group details.
+Dataset profile administration commands.
+
+### adddataset
+
+Create a RACF dataset profile.
 
 Usage:
 
-`listgroup <group> [options]`
+`adddataset <dataset> [options]`
 
 Options:
 
-- `-u, --users` list connected users
-- `-o, --omvs` list OMVS segment
+- `-t, --traits` traits to set (repeatable), e.g. `base:universal_access=None base:owner=eswift`
+- `-g, --generic` treat the dataset name as a generic profile (e.g. `ESWIFT.TEST.**`)
 - `-n, --no-color` disable colored output
 - `-d, --debug` debug SEAR request and response
-- `-j, --json` output as JSON
 - `-a, --all-json` output full raw SEAR JSON response
+
+
