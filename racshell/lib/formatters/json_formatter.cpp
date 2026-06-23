@@ -72,3 +72,26 @@ std::string JsonFormatter::format(const GroupData &group)
 
     return output.dump(2);
 }
+
+std::string JsonFormatter::format(const DatasetData &dataset)
+{
+    nlohmann::json output;
+
+    output["dataset"] = dataset.dataset;
+    output["owner"] = dataset.owner;
+    output["uacc"] = dataset.uacc;
+    output["audited"] = dataset.audited;
+    output["access_count"] = dataset.access_count;
+
+    if (!dataset.access_list.empty())
+    {
+        nlohmann::json access_array = nlohmann::json::array();
+        for (const auto &entry : dataset.access_list)
+        {
+            access_array.push_back({{"access_type", entry.access_type}, {"access_id", entry.access_id}});
+        }
+        output["access_list"] = access_array;
+    }
+
+    return output.dump(2);
+}

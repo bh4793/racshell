@@ -146,3 +146,34 @@ std::string TextFormatter::format(const GroupData &group)
 
     return ss.str();
 }
+
+std::string TextFormatter::format(const DatasetData &dataset)
+{
+    std::stringstream ss;
+
+    ss << "Dataset: " << dataset.dataset << "\n";
+    ss << "Owner: " << dataset.owner << "\n";
+    ss << "UACC: " << dataset.uacc << "\n";
+    ss << "Audited: " << (dataset.audited ? "YES" : "NO") << "\n";
+
+    if (dataset.access_count > 0)
+    {
+        ss << "Access Count: " << dataset.access_count << "\n";
+    }
+
+    if (!dataset.access_list.empty())
+    {
+        ss << "Access List:\n";
+        for (const auto &entry : dataset.access_list)
+        {
+            ss << "  " << entry.access_type;
+            if (!entry.access_id.empty())
+            {
+                ss << " (" << entry.access_id << ")";
+            }
+            ss << "\n";
+        }
+    }
+
+    return ss.str();
+}
