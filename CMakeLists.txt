@@ -52,6 +52,9 @@ target_link_libraries(altgroup racshell -static)
 add_executable(connect "racshell/connect.cpp")
 target_link_libraries(connect racshell -static)
 
+add_executable(remove "racshell/remove.cpp")
+target_link_libraries(remove racshell -static)
+
 add_custom_target(
     racshell_commands
     DEPENDS
@@ -64,4 +67,5 @@ add_custom_target(
     altuser
     altgroup
     connect
+    remove
 )

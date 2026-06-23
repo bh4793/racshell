@@ -18,6 +18,7 @@ The following commands are currently implemented in `racshell/`.
 | `altgroup` | Group | Alter RACF group | `--traits`, `--debug`, `--all-json`, `--no-color` |
 | `deletegroup` | Group | Delete RACF group | `--debug`, `--all-json`, `--no-color` |
 | `connect` | Group | Connect user to RACF group | `--traits`, `--debug`, `--all-json`, `--no-color` |
+| `remove` | Group | Remove user from RACF group | `--debug`, `--all-json`, `--no-color` |
 | `listgroup` | Group | Display RACF group details | `--users`, `--omvs`, `--json`, `--all-json`, `--debug`, `--no-color` |
 
 ## User Commands
@@ -147,6 +148,20 @@ Usage:
 Options:
 
 - `-t, --traits` connection traits to set (repeatable), e.g. `base:special=true`
+- `-n, --no-color` disable colored output
+- `-d, --debug` debug SEAR request and response
+- `-a, --all-json` output full raw SEAR JSON response
+
+### remove
+
+Remove a RACF user from a RACF group.
+
+Usage:
+
+`remove <userid> <group> [options]`
+
+Options:
+
 - `-n, --no-color` disable colored output
 - `-d, --debug` debug SEAR request and response
 - `-a, --all-json` output full raw SEAR JSON response
