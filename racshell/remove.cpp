@@ -1,80 +1,15 @@
-#include <argparse.hpp>
-#include <nlohmann/json.hpp>
-
-#include <iostream>
-#include <string>
-
-#include "sear/sear.h"
-#include "lib/command_helper.hpp"
+#include "lib/group_connection_command.hpp"
 
 int main(int argc, char *argv[])
 {
-    argparse::ArgumentParser program("remove");
+    const racshell::GroupConnectionCommandSpec spec = {
+        "remove",
+        "delete",
+        "RACF userid to remove from a group",
+        "RACF group to remove the user from",
+        "removed from",
+        false,
+        nullptr};
 
-    program.add_argument("userid")
-        .help("RACF userid to remove from a group");
-
-    program.add_argument("group")
-        .help("RACF group to remove the user from");
-
-    racshell::add_no_color_argument(program);
-    racshell::add_toggle_argument(program, "-d", "--debug", "debug sear request and response");
-    racshell::add_toggle_argument(program, "-a", "--all-json", "output full raw SEAR JSON response");
-
-    try
-    {
-        program.parse_args(argc, argv);
-    }
-    catch (const std::exception &err)
-    {
-        racshell::print_error(std::cerr, err.what());
-        std::cerr << program;
-        return 1;
-    }
-
-    racshell::set_color_output_enabled(!program.get<bool>("no-color"));
-
-    const std::string userid = program.get<std::string>("userid");
-    if (userid.length() > 8)
-    {
-        racshell::print_error(std::cerr, "Invalid input, must be a valid RACF userid");
-        return 1;
-    }
-
-    const std::string group = program.get<std::string>("group");
-    if (group.length() > 8)
-    {
-        racshell::print_error(std::cerr, "Invalid input, must be a valid RACF group");
-        return 1;
-    }
-
-    const bool debug = program.get<bool>("debug");
-    const bool all_json = program.get<bool>("all-json");
-
-    const nlohmann::json request = {
-        {"operation", "delete"},
-        {"admin_type", "group-connection"},
-        {"userid", userid},
-        {"group", group}};
-
-    const std::string request_json = request.dump();
-    sear_result_t *result = sear(request_json.c_str(), request_json.length(), debug);
-
-    if (all_json)
-    {
-        std::cout << result->result_json << "\n";
-        return 0;
-    }
-
-    const racshell::SearOperationInfo op_info = racshell::validate_sear_operation_result(result->result_json);
-    if (!op_info.success)
-    {
-        racshell::print_error(std::cerr, op_info.error_message);
-        racshell::print_sear_errors(op_info.response, std::cerr);
-        return 1;
-    }
-
-    racshell::print_success_prefix(std::cout);
-    std::cout << "User " << userid << " removed from group " << group << " successfully.\n";
-    return 0;
+    return racshell::run_group_connection_command(argc, argv, spec);
 }
