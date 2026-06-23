@@ -9,8 +9,7 @@ int main(int argc, char *argv[])
         "RACF userid to create",
         "Invalid input, must be a valid RACF userid",
         "traits to set, e.g. base:name='John Doe' omvs:uid=24 omvs:home_directory=/home/USER",
-        "User"
-    };
+        "User"};
 
     return racshell::run_add_entity_command(argc, argv, spec);
 }

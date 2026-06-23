@@ -9,8 +9,7 @@ int main(int argc, char *argv[])
         "RACF group to create",
         "Invalid input, must be a valid RACF group name",
         "traits to set, e.g. base:owner=SYS1 base:superior_group=SYS1",
-        "Group"
-    };
+        "Group"};
 
     return racshell::run_add_entity_command(argc, argv, spec);
 }
