@@ -17,6 +17,7 @@ The following commands are currently implemented in `racshell/`.
 | `addgroup` | Group | Create RACF group | `--traits`, `--debug`, `--all-json`, `--no-color` |
 | `altgroup` | Group | Alter RACF group | `--traits`, `--debug`, `--all-json`, `--no-color` |
 | `deletegroup` | Group | Delete RACF group | `--debug`, `--all-json`, `--no-color` |
+| `connect` | Group | Connect user to RACF group | `--traits`, `--debug`, `--all-json`, `--no-color` |
 | `listgroup` | Group | Display RACF group details | `--users`, `--omvs`, `--json`, `--all-json`, `--debug`, `--no-color` |
 
 ## User Commands
@@ -131,19 +132,21 @@ Usage:
 `deletegroup <group> [options]`
 
 Options:
+- `-n, --no-color` disable colored output
+- `-d, --debug` debug SEAR request and response
+- `-a, --all-json` output full raw SEAR JSON response
 
+### connect
 
-### altgroup
-
-Alter an existing RACF group.
+Connect a RACF user to a RACF group.
 
 Usage:
 
-`altgroup <group> [options]`
+`connect <userid> <group> [options]`
 
 Options:
 
-- `-t, --traits` traits to alter (repeatable), e.g. `base:owner=SYS1 omvs:gid=1234567`
+- `-t, --traits` connection traits to set (repeatable), e.g. `base:special=true`
 - `-n, --no-color` disable colored output
 - `-d, --debug` debug SEAR request and response
 - `-a, --all-json` output full raw SEAR JSON response
