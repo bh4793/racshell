@@ -45,3 +45,19 @@ target_link_libraries(deletegroup racshell -static)
 
 add_executable(altuser "racshell/altuser.cpp")
 target_link_libraries(altuser racshell -static)
+
+add_executable(altgroup "racshell/altgroup.cpp")
+target_link_libraries(altgroup racshell -static)
+
+add_custom_target(
+    racshell_commands
+    DEPENDS
+    listuser
+    listgroup
+    adduser
+    addgroup
+    deleteuser
+    deletegroup
+    altuser
+    altgroup
+)

@@ -15,6 +15,7 @@ The following commands are currently implemented in `racshell/`.
 | `deleteuser` | User | Delete RACF user | `--debug`, `--all-json`, `--no-color` |
 | `listuser` | User | Display RACF user details | `--groups`, `--tso`, `--kerberos`, `--cics`, `--omvs`, `--security`, `--json`, `--all-json`, `--debug`, `--no-color` |
 | `addgroup` | Group | Create RACF group | `--traits`, `--debug`, `--all-json`, `--no-color` |
+| `altgroup` | Group | Alter RACF group | `--traits`, `--debug`, `--all-json`, `--no-color` |
 | `deletegroup` | Group | Delete RACF group | `--debug`, `--all-json`, `--no-color` |
 | `listgroup` | Group | Display RACF group details | `--users`, `--omvs`, `--json`, `--all-json`, `--debug`, `--no-color` |
 
@@ -106,6 +107,21 @@ Options:
 - `-d, --debug` debug SEAR request and response
 - `-a, --all-json` output full raw SEAR JSON response
 
+### altgroup
+
+Alter an existing RACF group.
+
+Usage:
+
+`altgroup <group> [options]`
+
+Options:
+
+- `-t, --traits` traits to alter (repeatable), e.g. `base:owner=SYS1 omvs:gid=1234567`
+- `-n, --no-color` disable colored output
+- `-d, --debug` debug SEAR request and response
+- `-a, --all-json` output full raw SEAR JSON response
+
 ### deletegroup
 
 Delete a RACF group.
@@ -116,6 +132,18 @@ Usage:
 
 Options:
 
+
+### altgroup
+
+Alter an existing RACF group.
+
+Usage:
+
+`altgroup <group> [options]`
+
+Options:
+
+- `-t, --traits` traits to alter (repeatable), e.g. `base:owner=SYS1 omvs:gid=1234567`
 - `-n, --no-color` disable colored output
 - `-d, --debug` debug SEAR request and response
 - `-a, --all-json` output full raw SEAR JSON response
