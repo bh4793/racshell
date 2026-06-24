@@ -15,37 +15,29 @@ std::string JsonFormatter::format(const UserData &user)
         output["groups"] = user.groups;
     }
 
-    if (!user.security.is_null() && !user.security.empty())
-    {
-        output["security"] = user.security;
-    }
-
-    if (!user.tso.is_null() && !user.tso.empty())
-    {
-        output["tso"] = user.tso;
-    }
-
-    if (!user.omvs.is_null() && !user.omvs.empty())
-    {
-        output["omvs"] = user.omvs;
-    }
-
-    if (!user.kerberos.is_null() && !user.kerberos.empty())
-    {
-        output["kerberos"] = user.kerberos;
-    }
-
-    if (!user.cics.is_null() && !user.cics.empty())
-    {
-        output["cics"] = user.cics;
-    }
-
-    if (!user.csdata.is_null() && !user.csdata.empty())
-    {
-        output["csdata"] = user.csdata;
-    }
+    add_if_present(output, user.security, "security");
+    add_if_present(output, user.tso, "tso");
+    add_if_present(output, user.omvs, "omvs");
+    add_if_present(output, user.kerberos, "kerberos");
+    add_if_present(output, user.cics, "cics");
+    add_if_present(output, user.csdata, "csdata");
 
     return output.dump(2);
+}
+
+namespace
+{
+
+    void add_if_present(nlohmann::json &output,
+                        const nlohmann::json &value,
+                        const char *key)
+    {
+        if (!value.is_null() && !value.empty())
+        {
+            output[key] = value;
+        }
+    }
+
 }
 
 std::string JsonFormatter::format(const GroupData &group)
@@ -70,15 +62,8 @@ std::string JsonFormatter::format(const GroupData &group)
         output["connected_users"] = users;
     }
 
-    if (!group.omvs.is_null() && !group.omvs.empty())
-    {
-        output["omvs"] = group.omvs;
-    }
-
-    if (!group.csdata.is_null() && !group.csdata.empty())
-    {
-        output["csdata"] = group.csdata;
-    }
+    add_if_present(output, group.omvs, "omvs");
+    add_if_present(output, group.csdata, "csdata");
 
     return output.dump(2);
 }
@@ -103,10 +88,7 @@ std::string JsonFormatter::format(const DatasetData &dataset)
         output["access_list"] = access_array;
     }
 
-    if (!dataset.csdata.is_null() && !dataset.csdata.empty())
-    {
-        output["csdata"] = dataset.csdata;
-    }
+    add_if_present(output, dataset.csdata, "csdata");
 
     return output.dump(2);
 }
@@ -120,10 +102,7 @@ std::string JsonFormatter::format(const ResourceData &resource)
     output["owner"] = resource.owner;
     output["universal_access"] = resource.universal_access;
 
-    if (!resource.csdata.is_null() && !resource.csdata.empty())
-    {
-        output["csdata"] = resource.csdata;
-    }
+    add_if_present(output, resource.csdata, "csdata");
 
     return output.dump(2);
 }

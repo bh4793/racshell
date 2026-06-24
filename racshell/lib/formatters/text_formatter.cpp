@@ -29,6 +29,26 @@ namespace
         return key;
     }
 
+    void append_csdata(std::stringstream &ss, const nlohmann::json &csdata)
+    {
+        if (!csdata.is_null() && !csdata.empty())
+        {
+            ss << "CSDATA:\n";
+            for (auto it = csdata.begin(); it != csdata.end(); ++it)
+            {
+                ss << "  " << format_security_key(it.key()) << ": ";
+                if (it.value().is_string())
+                {
+                    ss << it.value().get<std::string>() << "\n";
+                }
+                else
+                {
+                    ss << it.value().dump() << "\n";
+                }
+            }
+        }
+    }
+
 } // namespace
 
 std::string TextFormatter::format(const UserData &user)
@@ -107,22 +127,7 @@ std::string TextFormatter::format(const UserData &user)
         ss << "CICS: " << user.cics.dump() << "\n";
     }
 
-    if (!user.csdata.is_null() && !user.csdata.empty())
-    {
-        ss << "CSDATA:\n";
-        for (auto it = user.csdata.begin(); it != user.csdata.end(); ++it)
-        {
-            ss << "  " << format_security_key(it.key()) << ": ";
-            if (it.value().is_string())
-            {
-                ss << it.value().get<std::string>() << "\n";
-            }
-            else
-            {
-                ss << it.value().dump() << "\n";
-            }
-        }
-    }
+    append_csdata(ss, user.csdata);
 
     return ss.str();
 }
@@ -161,22 +166,7 @@ std::string TextFormatter::format(const GroupData &group)
         }
     }
 
-    if (!group.csdata.is_null() && !group.csdata.empty())
-    {
-        ss << "CSDATA:\n";
-        for (auto it = group.csdata.begin(); it != group.csdata.end(); ++it)
-        {
-            ss << "  " << format_security_key(it.key()) << ": ";
-            if (it.value().is_string())
-            {
-                ss << it.value().get<std::string>() << "\n";
-            }
-            else
-            {
-                ss << it.value().dump() << "\n";
-            }
-        }
-    }
+    append_csdata(ss, group.csdata);
 
     return ss.str();
 }
@@ -209,22 +199,7 @@ std::string TextFormatter::format(const DatasetData &dataset)
         }
     }
 
-    if (!dataset.csdata.is_null() && !dataset.csdata.empty())
-    {
-        ss << "CSDATA:\n";
-        for (auto it = dataset.csdata.begin(); it != dataset.csdata.end(); ++it)
-        {
-            ss << "  " << format_security_key(it.key()) << ": ";
-            if (it.value().is_string())
-            {
-                ss << it.value().get<std::string>() << "\n";
-            }
-            else
-            {
-                ss << it.value().dump() << "\n";
-            }
-        }
-    }
+    append_csdata(ss, dataset.csdata);
 
     return ss.str();
 }
@@ -243,22 +218,7 @@ std::string TextFormatter::format(const ResourceData &resource)
         ss << "Created: " << resource.base["base:create_date"] << "\n";
     }
 
-    if (!resource.csdata.is_null() && !resource.csdata.empty())
-    {
-        ss << "CSDATA:\n";
-        for (auto it = resource.csdata.begin(); it != resource.csdata.end(); ++it)
-        {
-            ss << "  " << format_security_key(it.key()) << ": ";
-            if (it.value().is_string())
-            {
-                ss << it.value().get<std::string>() << "\n";
-            }
-            else
-            {
-                ss << it.value().dump() << "\n";
-            }
-        }
-    }
+    append_csdata(ss, resource.csdata);
 
     return ss.str();
 }
