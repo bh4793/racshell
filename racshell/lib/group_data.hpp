@@ -22,6 +22,7 @@ struct GroupData
     bool terminal_universal_access = false;
     std::vector<GroupUser> connected_users;
     nlohmann::json omvs;
+    nlohmann::json csdata; 
 };
 
 #endif // GROUP_DATA_HPP

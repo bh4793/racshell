@@ -19,6 +19,7 @@ struct DatasetData
     bool audited = false;
     int access_count = 0;
     std::vector<DatasetAccessEntry> access_list;
+    nlohmann::json csdata;
 };
 
 #endif // DATASET_DATA_HPP

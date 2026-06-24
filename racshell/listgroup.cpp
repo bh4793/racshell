@@ -16,6 +16,7 @@ int main(int argc, char *argv[])
         .help("RACF group to list");
 
     racshell::add_toggle_argument(program, "-u", "--users", "list connected users");
+    racshell::add_toggle_argument(program, "-x", "--csdata", "list CSDATA segment");
     racshell::add_toggle_argument(program, "-o", "--omvs", "list OMVS segment");
     racshell::add_no_color_argument(program);
     racshell::add_toggle_argument(program, "-d", "--debug", "debug sear request and response");
@@ -50,6 +51,7 @@ int main(int argc, char *argv[])
         bool omvs = program.get<bool>("omvs");
         bool json_output = program.get<bool>("json");
         bool all_json = program.get<bool>("all-json");
+        bool csdata = program.get<bool>("csdata");
 
         nlohmann::json req = {
             {"operation", "extract"},
@@ -98,6 +100,11 @@ int main(int argc, char *argv[])
         if (omvs && profile.contains("omvs"))
         {
             group_data.omvs = profile["omvs"];
+        }
+
+        if (csdata && profile.contains("csdata") && profile["csdata"].is_object())
+        {
+            group_data.csdata = profile["csdata"];
         }
 
         std::unique_ptr<OutputFormatter> formatter;

@@ -40,6 +40,11 @@ std::string JsonFormatter::format(const UserData &user)
         output["cics"] = user.cics;
     }
 
+    if (!user.csdata.is_null() && !user.csdata.empty())
+    {
+        output["csdata"] = user.csdata;
+    }
+
     return output.dump(2);
 }
 
@@ -70,6 +75,11 @@ std::string JsonFormatter::format(const GroupData &group)
         output["omvs"] = group.omvs;
     }
 
+    if (!group.csdata.is_null() && !group.csdata.empty())
+    {
+        output["csdata"] = group.csdata;
+    }
+
     return output.dump(2);
 }
 
@@ -91,6 +101,11 @@ std::string JsonFormatter::format(const DatasetData &dataset)
             access_array.push_back({{"access_type", entry.access_type}, {"access_id", entry.access_id}});
         }
         output["access_list"] = access_array;
+    }
+
+    if (!dataset.csdata.is_null() && !dataset.csdata.empty())
+    {
+        output["csdata"] = dataset.csdata;
     }
 
     return output.dump(2);

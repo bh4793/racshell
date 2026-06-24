@@ -18,6 +18,7 @@ struct UserData
     nlohmann::json omvs;
     nlohmann::json kerberos;
     nlohmann::json cics;
+    nlohmann::json csdata;
 };
 
 #endif // USER_DATA_HPP

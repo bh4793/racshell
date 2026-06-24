@@ -107,6 +107,23 @@ std::string TextFormatter::format(const UserData &user)
         ss << "CICS: " << user.cics.dump() << "\n";
     }
 
+    if (!user.csdata.is_null() && !user.csdata.empty())
+    {
+        ss << "CSDATA:\n";
+        for (auto it = user.csdata.begin(); it != user.csdata.end(); ++it)
+        {
+            ss << "  " << format_security_key(it.key()) << ": ";
+            if (it.value().is_string())
+            {
+                ss << it.value().get<std::string>() << "\n";
+            }
+            else
+            {
+                ss << it.value().dump() << "\n";
+            }
+        }
+    }
+
     return ss.str();
 }
 
@@ -144,6 +161,23 @@ std::string TextFormatter::format(const GroupData &group)
         }
     }
 
+    if (!group.csdata.is_null() && !group.csdata.empty())
+    {
+        ss << "CSDATA:\n";
+        for (auto it = group.csdata.begin(); it != group.csdata.end(); ++it)
+        {
+            ss << "  " << format_security_key(it.key()) << ": ";
+            if (it.value().is_string())
+            {
+                ss << it.value().get<std::string>() << "\n";
+            }
+            else
+            {
+                ss << it.value().dump() << "\n";
+            }
+        }
+    }
+
     return ss.str();
 }
 
@@ -172,6 +206,23 @@ std::string TextFormatter::format(const DatasetData &dataset)
                 ss << " (" << entry.access_id << ")";
             }
             ss << "\n";
+        }
+    }
+
+    if (!dataset.csdata.is_null() && !dataset.csdata.empty())
+    {
+        ss << "CSDATA:\n";
+        for (auto it = dataset.csdata.begin(); it != dataset.csdata.end(); ++it)
+        {
+            ss << "  " << format_security_key(it.key()) << ": ";
+            if (it.value().is_string())
+            {
+                ss << it.value().get<std::string>() << "\n";
+            }
+            else
+            {
+                ss << it.value().dump() << "\n";
+            }
         }
     }
 

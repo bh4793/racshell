@@ -16,6 +16,7 @@ int main(int argc, char *argv[])
         .help("dataset profile name to display, e.g. LEONARD.LIB.HLASM");
 
     racshell::add_toggle_argument(program, "-g", "--generic", "treat the dataset name as a generic profile");
+    racshell::add_toggle_argument(program, "-x", "--csdata", "list CSDATA segment");
     racshell::add_no_color_argument(program);
     racshell::add_toggle_argument(program, "-d", "--debug", "debug sear request and response");
     racshell::add_toggle_argument(program, "-j", "--json", "output as JSON");
@@ -45,6 +46,7 @@ int main(int argc, char *argv[])
     const bool debug = program.get<bool>("debug");
     const bool json_output = program.get<bool>("json");
     const bool all_json = program.get<bool>("all-json");
+    const bool csdata = program.get<bool>("csdata");
 
     nlohmann::json request = {
         {"operation", "extract"},
@@ -73,6 +75,7 @@ int main(int argc, char *argv[])
     }
 
     const nlohmann::json base = sear_info.base;
+    const nlohmann::json profile = sear_info.profile;
 
     DatasetData dataset_data;
     dataset_data.dataset = dataset;
@@ -109,6 +112,11 @@ int main(int argc, char *argv[])
             }
             dataset_data.access_list.push_back(access_entry);
         }
+    }
+
+    if (csdata && profile.contains("csdata") && profile["csdata"].is_object())
+    {
+        dataset_data.csdata = profile["csdata"];
     }
 
     std::unique_ptr<OutputFormatter> formatter;

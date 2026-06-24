@@ -26,6 +26,7 @@ int main(int argc, char *argv[])
     racshell::add_toggle_argument(program, "-c", "--cics", "list CICS segment");
     racshell::add_toggle_argument(program, "-o", "--omvs", "list OMVS segment");
     racshell::add_toggle_argument(program, "-s", "--security", "list security-related fields");
+    racshell::add_toggle_argument(program, "-x", "--csdata", "list CSDATA segment");
     racshell::add_no_color_argument(program);
     racshell::add_toggle_argument(program, "-d", "--debug", "debug sear request and response");
     racshell::add_toggle_argument(program, "-j", "--json", "output as JSON");
@@ -56,6 +57,7 @@ int main(int argc, char *argv[])
     {
         bool debug = program.get<bool>("debug");
         bool groups = program.get<bool>("groups");
+        bool csdata = program.get<bool>("csdata");
         bool tso = program.get<bool>("tso");
         bool kerberos = program.get<bool>("kerberos");
         bool cics = program.get<bool>("cics");
@@ -63,7 +65,7 @@ int main(int argc, char *argv[])
         bool security = program.get<bool>("security");
         bool json_output = program.get<bool>("json");
         bool all_json = program.get<bool>("all-json");
-
+        
         // extract user information
         nlohmann::json req = {
             {"operation", "extract"},
@@ -158,6 +160,10 @@ int main(int argc, char *argv[])
         if (cics && profile.contains("cics"))
         {
             user_data.cics = profile["cics"];
+        }
+        if (csdata && profile.contains("csdata") && profile["csdata"].is_object())
+        {
+            user_data.csdata = profile["csdata"];
         }
 
         std::unique_ptr<OutputFormatter> formatter;
