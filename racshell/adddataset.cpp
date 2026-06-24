@@ -22,6 +22,7 @@ int main(int argc, char *argv[])
     racshell::add_toggle_argument(program, "-g", "--generic", "treat the dataset name as a generic profile");
     racshell::add_no_color_argument(program);
     racshell::add_toggle_argument(program, "-d", "--debug", "debug sear request and response");
+    racshell::add_toggle_argument(program, "-j", "--json", "output as JSON");
     racshell::add_toggle_argument(program, "-a", "--all-json", "output full raw SEAR JSON response");
 
     try
@@ -46,6 +47,7 @@ int main(int argc, char *argv[])
 
     const bool generic = program.get<bool>("generic");
     const bool debug = program.get<bool>("debug");
+    const bool json_output = program.get<bool>("json");
     const bool all_json = program.get<bool>("all-json");
 
     nlohmann::json traits;
@@ -82,7 +84,17 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    racshell::print_success_prefix(std::cout);
-    std::cout << "Dataset profile " << dataset << " created successfully.\n";
+    if (json_output)
+    {
+        nlohmann::json output;
+        output["dataset"] = dataset;
+        output["status"] = "created";
+        std::cout << output.dump(2) << "\n";
+    }
+    else
+    {
+        racshell::print_success_prefix(std::cout);
+        std::cout << "Dataset profile " << dataset << " created successfully.\n";
+    }
     return 0;
 }

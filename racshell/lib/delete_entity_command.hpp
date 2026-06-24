@@ -31,6 +31,7 @@ namespace racshell
 
         add_no_color_argument(program);
         add_toggle_argument(program, "-d", "--debug", "debug sear request and response");
+        add_toggle_argument(program, "-j", "--json", "output as JSON");
         add_toggle_argument(program, "-a", "--all-json", "output full raw SEAR JSON response");
 
         try
@@ -54,6 +55,7 @@ namespace racshell
         }
 
         const bool debug = program.get<bool>("debug");
+        const bool json_output = program.get<bool>("json");
         const bool all_json = program.get<bool>("all-json");
 
         nlohmann::json request = {
@@ -78,8 +80,18 @@ namespace racshell
             return 1;
         }
 
-        print_success_prefix(std::cout);
-        std::cout << spec.success_label << " " << entity_value << " deleted successfully.\n";
+        if (json_output)
+        {
+            nlohmann::json output;
+            output[spec.entity_argument] = entity_value;
+            output["status"] = "deleted";
+            std::cout << output.dump(2) << "\n";
+        }
+        else
+        {
+            print_success_prefix(std::cout);
+            std::cout << spec.success_label << " " << entity_value << " deleted successfully.\n";
+        }
         return 0;
     }
 

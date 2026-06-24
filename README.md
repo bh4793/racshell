@@ -10,22 +10,22 @@ The following commands are currently implemented in `racshell/`.
 
 | Command | Category | Purpose | Key Options |
 | --- | --- | --- | --- |
-| `adduser` | User | Create RACF user | `--traits`, `--debug`, `--all-json`, `--no-color` |
-| `altuser` | User | Alter RACF user | `--traits`, `--debug`, `--all-json`, `--no-color` |
-| `deleteuser` | User | Delete RACF user | `--debug`, `--all-json`, `--no-color` |
+| `adduser` | User | Create RACF user | `--traits`, `--json`, `--debug`, `--all-json`, `--no-color` |
+| `altuser` | User | Alter RACF user | `--traits`, `--json`, `--debug`, `--all-json`, `--no-color` |
+| `deleteuser` | User | Delete RACF user | `--json`, `--debug`, `--all-json`, `--no-color` |
 | `listuser` | User | Display RACF user details | `--groups`, `--tso`, `--kerberos`, `--cics`, `--omvs`, `--security`, `--csdata`, `--json`, `--all-json`, `--debug`, `--no-color` |
-| `addgroup` | Group | Create RACF group | `--traits`, `--debug`, `--all-json`, `--no-color` |
-| `altgroup` | Group | Alter RACF group | `--traits`, `--debug`, `--all-json`, `--no-color` |
-| `deletegroup` | Group | Delete RACF group | `--debug`, `--all-json`, `--no-color` |
-| `connect` | Group | Connect user to RACF group | `--traits`, `--debug`, `--all-json`, `--no-color` |
-| `remove` | Group | Remove user from RACF group | `--debug`, `--all-json`, `--no-color` |
+| `addgroup` | Group | Create RACF group | `--traits`, `--json`, `--debug`, `--all-json`, `--no-color` |
+| `altgroup` | Group | Alter RACF group | `--traits`, `--json`, `--debug`, `--all-json`, `--no-color` |
+| `deletegroup` | Group | Delete RACF group | `--json`, `--debug`, `--all-json`, `--no-color` |
+| `connect` | Group | Connect user to RACF group | `--traits`, `--json`, `--debug`, `--all-json`, `--no-color` |
+| `remove` | Group | Remove user from RACF group | `--json`, `--debug`, `--all-json`, `--no-color` |
 | `listgroup` | Group | Display RACF group details | `--users`, `--omvs`, `--csdata`, `--json`, `--all-json`, `--debug`, `--no-color` |
-| `adddataset` | Dataset | Create RACF dataset profile | `--generic`, `--traits`, `--debug`, `--all-json`, `--no-color` |
+| `adddataset` | Dataset | Create RACF dataset profile | `--generic`, `--traits`, `--json`, `--debug`, `--all-json`, `--no-color` |
 | `deletedataset` | Dataset | Delete RACF dataset profile | `--generic`, `--json`, `--debug`, `--all-json`, `--no-color` |
 | `listdataset` | Dataset | Display RACF dataset profile details | `--generic`, `--csdata`, `--json`, `--debug`, `--all-json`, `--no-color` |
-| `addresource` | Resource | Create RACF resource profile | `--traits`, `--debug`, `--all-json`, `--no-color` |
-| `altresource` | Resource | Alter RACF resource profile | `--traits`, `--debug`, `--all-json`, `--no-color` |
-| `deleteresource` | Resource | Delete RACF resource profile | `--debug`, `--all-json`, `--no-color` |
+| `addresource` | Resource | Create RACF resource profile | `--traits`, `--json`, `--debug`, `--all-json`, `--no-color` |
+| `altresource` | Resource | Alter RACF resource profile | `--traits`, `--json`, `--debug`, `--all-json`, `--no-color` |
+| `deleteresource` | Resource | Delete RACF resource profile | `--json`, `--debug`, `--all-json`, `--no-color` |
 | `listresource` | Resource | Display RACF resource profile details | `--csdata`, `--json`, `--debug`, `--all-json`, `--no-color` |
 
 ## User Commands
@@ -45,6 +45,7 @@ Options:
 - `-t, --traits` traits to set (repeatable), e.g. `base:name='John Doe' omvs:uid=24`
 - `-n, --no-color` disable colored output
 - `-d, --debug` debug SEAR request and response
+- `-j, --json` output as JSON
 - `-a, --all-json` output full raw SEAR JSON response
 
 ### altuser
@@ -60,6 +61,7 @@ Options:
 - `-t, --traits` traits to alter (repeatable), e.g. `base:name='LEONARD CARCARAMO' base:special=true`
 - `-n, --no-color` disable colored output
 - `-d, --debug` debug SEAR request and response
+- `-j, --json` output as JSON
 - `-a, --all-json` output full raw SEAR JSON response
 
 ### deleteuser
@@ -74,6 +76,7 @@ Options:
 
 - `-n, --no-color` disable colored output
 - `-d, --debug` debug SEAR request and response
+- `-j, --json` output as JSON
 - `-a, --all-json` output full raw SEAR JSON response
 
 ### listuser
@@ -115,6 +118,7 @@ Options:
 - `-t, --traits` traits to set (repeatable), e.g. `base:owner=SYS1 base:superior_group=SYS1`
 - `-n, --no-color` disable colored output
 - `-d, --debug` debug SEAR request and response
+- `-j, --json` output as JSON
 - `-a, --all-json` output full raw SEAR JSON response
 
 ### altgroup
@@ -130,6 +134,7 @@ Options:
 - `-t, --traits` traits to alter (repeatable), e.g. `base:owner=SYS1 omvs:gid=1234567`
 - `-n, --no-color` disable colored output
 - `-d, --debug` debug SEAR request and response
+- `-j, --json` output as JSON
 - `-a, --all-json` output full raw SEAR JSON response
 
 ### deletegroup
@@ -141,8 +146,10 @@ Usage:
 `deletegroup <group> [options]`
 
 Options:
+
 - `-n, --no-color` disable colored output
 - `-d, --debug` debug SEAR request and response
+- `-j, --json` output as JSON
 - `-a, --all-json` output full raw SEAR JSON response
 
 ### listgroup
@@ -176,6 +183,7 @@ Options:
 - `-t, --traits` connection traits to set (repeatable), e.g. `base:special=true`
 - `-n, --no-color` disable colored output
 - `-d, --debug` debug SEAR request and response
+- `-j, --json` output as JSON
 - `-a, --all-json` output full raw SEAR JSON response
 
 ### remove
@@ -190,6 +198,7 @@ Options:
 
 - `-n, --no-color` disable colored output
 - `-d, --debug` debug SEAR request and response
+- `-j, --json` output as JSON
 - `-a, --all-json` output full raw SEAR JSON response
 
 ## Dataset Commands
@@ -210,6 +219,7 @@ Options:
 - `-g, --generic` treat the dataset name as a generic profile (e.g. `ESWIFT.TEST.**`)
 - `-n, --no-color` disable colored output
 - `-d, --debug` debug SEAR request and response
+- `-j, --json` output as JSON
 - `-a, --all-json` output full raw SEAR JSON response
 
 ### deletedataset
@@ -262,6 +272,7 @@ Options:
 - `-t, --traits` traits to set (repeatable), e.g. `base:owner=SECADM base:universal_access=None`
 - `-n, --no-color` disable colored output
 - `-d, --debug` debug SEAR request and response
+- `-j, --json` output as JSON
 - `-a, --all-json` output full raw SEAR JSON response
 
 ### altresource
@@ -277,6 +288,7 @@ Options:
 - `-t, --traits` traits to alter (repeatable), e.g. `base:owner=SECADM base:universal_access=None`
 - `-n, --no-color` disable colored output
 - `-d, --debug` debug SEAR request and response
+- `-j, --json` output as JSON
 - `-a, --all-json` output full raw SEAR JSON response
 
 ### deleteresource
@@ -291,6 +303,7 @@ Options:
 
 - `-n, --no-color` disable colored output
 - `-d, --debug` debug SEAR request and response
+- `-j, --json` output as JSON
 - `-a, --all-json` output full raw SEAR JSON response
 
 ### listresource

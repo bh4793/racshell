@@ -41,6 +41,7 @@ namespace racshell
 
         add_no_color_argument(program);
         add_toggle_argument(program, "-d", "--debug", "debug sear request and response");
+        add_toggle_argument(program, "-j", "--json", "output as JSON");
         add_toggle_argument(program, "-a", "--all-json", "output full raw SEAR JSON response");
 
         try
@@ -71,6 +72,7 @@ namespace racshell
         }
 
         const bool debug = program.get<bool>("debug");
+        const bool json_output = program.get<bool>("json");
         const bool all_json = program.get<bool>("all-json");
 
         nlohmann::json traits = nlohmann::json::object();
@@ -110,8 +112,19 @@ namespace racshell
             return 1;
         }
 
-        print_success_prefix(std::cout);
-        std::cout << spec.success_label << " " << resource << " " << spec.success_verb << " successfully in class " << resource_class << ".\n";
+        if (json_output)
+        {
+            nlohmann::json output;
+            output["resource"] = resource;
+            output["class"] = resource_class;
+            output["status"] = spec.success_verb;
+            std::cout << output.dump(2) << "\n";
+        }
+        else
+        {
+            print_success_prefix(std::cout);
+            std::cout << spec.success_label << " " << resource << " " << spec.success_verb << " successfully in class " << resource_class << ".\n";
+        }
         return 0;
     }
 
