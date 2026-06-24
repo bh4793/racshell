@@ -19,7 +19,9 @@ int main(int argc, char *argv[])
     program.add_argument("class")
         .help("resource profile class, e.g. facility");
 
+    // Optional parameters for data not displayed by default
     racshell::add_toggle_argument(program, "-x", "--csdata", "list CSDATA segment");
+    racshell::add_toggle_argument(program, "-l", "--access", "list access control list");
     racshell::add_no_color_argument(program);
     racshell::add_toggle_argument(program, "-d", "--debug", "debug sear request and response");
     racshell::add_toggle_argument(program, "-j", "--json", "output as JSON");
@@ -56,6 +58,7 @@ int main(int argc, char *argv[])
     const bool json_output = program.get<bool>("json");
     const bool all_json = program.get<bool>("all-json");
     const bool csdata = program.get<bool>("csdata");
+    const bool access = program.get<bool>("access");
 
     nlohmann::json request = {
         {"operation", "extract"},
@@ -90,6 +93,23 @@ int main(int argc, char *argv[])
     if (csdata && sear_info.profile.contains("csdata") && sear_info.profile["csdata"].is_object())
     {
         resource_data.csdata = sear_info.profile["csdata"];
+    }
+
+    if (access && sear_info.profile.contains("access_list") && sear_info.profile["access_list"].is_array())
+    {
+        for (const auto &entry : sear_info.profile["access_list"])
+        {
+            ResourceAccessEntry access_entry;
+            if (entry.contains("access_type"))
+            {
+                access_entry.access_type = entry["access_type"];
+            }
+            if (entry.contains("access_id"))
+            {
+                access_entry.access_id = entry["access_id"];
+            }
+            resource_data.access_list.push_back(access_entry);
+        }
     }
 
     std::unique_ptr<OutputFormatter> formatter;

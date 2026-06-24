@@ -102,6 +102,16 @@ std::string JsonFormatter::format(const ResourceData &resource)
     output["owner"] = resource.owner;
     output["universal_access"] = resource.universal_access;
 
+    if (!resource.access_list.empty())
+    {
+        nlohmann::json access_array = nlohmann::json::array();
+        for (const auto &entry : resource.access_list)
+        {
+            access_array.push_back({{"access_type", entry.access_type}, {"access_id", entry.access_id}});
+        }
+        output["access_list"] = access_array;
+    }
+
     add_if_present(output, resource.csdata, "csdata");
 
     return output.dump(2);

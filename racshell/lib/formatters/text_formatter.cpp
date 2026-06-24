@@ -218,6 +218,20 @@ std::string TextFormatter::format(const ResourceData &resource)
         ss << "Created: " << resource.base["base:create_date"] << "\n";
     }
 
+    if (!resource.access_list.empty())
+    {
+        ss << "Access List:\n";
+        for (const auto &entry : resource.access_list)
+        {
+            ss << "  " << entry.access_type;
+            if (!entry.access_id.empty())
+            {
+                ss << " (" << entry.access_id << ")";
+            }
+            ss << "\n";
+        }
+    }
+
     append_csdata(ss, resource.csdata);
 
     return ss.str();

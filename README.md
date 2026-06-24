@@ -26,7 +26,7 @@ The following commands are currently implemented in `racshell/`.
 | `addresource` | Resource | Create RACF resource profile | `--traits`, `--json`, `--debug`, `--all-json`, `--no-color` |
 | `altresource` | Resource | Alter RACF resource profile | `--traits`, `--json`, `--debug`, `--all-json`, `--no-color` |
 | `deleteresource` | Resource | Delete RACF resource profile | `--json`, `--debug`, `--all-json`, `--no-color` |
-| `listresource` | Resource | Display RACF resource profile details | `--csdata`, `--json`, `--debug`, `--all-json`, `--no-color` |
+| `listresource` | Resource | Display RACF resource profile details | `--csdata`, `--access`, `--json`, `--debug`, `--all-json`, `--no-color` |
 
 ## User Commands
 
@@ -317,6 +317,7 @@ Usage:
 Options:
 
 - `-x, --csdata` list CSDATA segment
+- `-l, --access` list access control list
 - `-n, --no-color` disable colored output
 - `-d, --debug` debug SEAR request and response
 - `-j, --json` output as JSON

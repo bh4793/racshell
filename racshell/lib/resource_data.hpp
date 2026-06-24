@@ -2,7 +2,14 @@
 #define RESOURCE_DATA_HPP
 
 #include <string>
+#include <vector>
 #include <nlohmann/json.hpp>
+
+struct ResourceAccessEntry
+{
+    std::string access_type;
+    std::string access_id;
+};
 
 struct ResourceData
 {
@@ -12,6 +19,7 @@ struct ResourceData
     std::string universal_access;
     nlohmann::json profile;
     nlohmann::json base;
+    std::vector<ResourceAccessEntry> access_list;
     nlohmann::json csdata;
 };
 
