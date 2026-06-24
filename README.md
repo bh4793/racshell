@@ -13,16 +13,16 @@ The following commands are currently implemented in `racshell/`.
 | `adduser` | User | Create RACF user | `--traits`, `--debug`, `--all-json`, `--no-color` |
 | `altuser` | User | Alter RACF user | `--traits`, `--debug`, `--all-json`, `--no-color` |
 | `deleteuser` | User | Delete RACF user | `--debug`, `--all-json`, `--no-color` |
-| `listuser` | User | Display RACF user details | `--groups`, `--tso`, `--kerberos`, `--cics`, `--omvs`, `--security`, `--json`, `--all-json`, `--debug`, `--no-color` |
+| `listuser` | User | Display RACF user details | `--groups`, `--tso`, `--kerberos`, `--cics`, `--omvs`, `--security`, `--csdata`, `--json`, `--all-json`, `--debug`, `--no-color` |
 | `addgroup` | Group | Create RACF group | `--traits`, `--debug`, `--all-json`, `--no-color` |
 | `altgroup` | Group | Alter RACF group | `--traits`, `--debug`, `--all-json`, `--no-color` |
 | `deletegroup` | Group | Delete RACF group | `--debug`, `--all-json`, `--no-color` |
 | `connect` | Group | Connect user to RACF group | `--traits`, `--debug`, `--all-json`, `--no-color` |
 | `remove` | Group | Remove user from RACF group | `--debug`, `--all-json`, `--no-color` |
-| `listgroup` | Group | Display RACF group details | `--users`, `--omvs`, `--json`, `--all-json`, `--debug`, `--no-color` |
+| `listgroup` | Group | Display RACF group details | `--users`, `--omvs`, `--csdata`, `--json`, `--all-json`, `--debug`, `--no-color` |
 | `adddataset` | Dataset | Create RACF dataset profile | `--generic`, `--traits`, `--debug`, `--all-json`, `--no-color` |
-| `deletedataset` | Dataset | Delete RACF dataset profile | `--generic`, `--debug`, `--all-json`, `--no-color` |
-| `listdataset` | Dataset | Display RACF dataset profile details | `--generic`, `--json`, `--debug`, `--all-json`, `--no-color` |
+| `deletedataset` | Dataset | Delete RACF dataset profile | `--generic`, `--json`, `--debug`, `--all-json`, `--no-color` |
+| `listdataset` | Dataset | Display RACF dataset profile details | `--generic`, `--csdata`, `--json`, `--debug`, `--all-json`, `--no-color` |
 | `addresource` | Resource | Create RACF resource profile | `--traits`, `--debug`, `--all-json`, `--no-color` |
 | `altresource` | Resource | Alter RACF resource profile | `--traits`, `--debug`, `--all-json`, `--no-color` |
 | `deleteresource` | Resource | Delete RACF resource profile | `--debug`, `--all-json`, `--no-color` |
@@ -92,6 +92,7 @@ Options:
 - `-c, --cics` list CICS segment
 - `-o, --omvs` list OMVS segment
 - `-s, --security` list security-related fields
+- `-x, --csdata` list CSDATA segment
 - `-n, --no-color` disable colored output
 - `-d, --debug` debug SEAR request and response
 - `-j, --json` output as JSON
@@ -156,6 +157,7 @@ Options:
 
 - `-u, --users` list connected users
 - `-o, --omvs` list OMVS segment
+- `-x, --csdata` list CSDATA segment
 - `-n, --no-color` disable colored output
 - `-d, --debug` debug SEAR request and response
 - `-j, --json` output as JSON
@@ -237,8 +239,10 @@ Usage:
 Options:
 
 - `-g, --generic` treat the dataset name as a generic profile
+- `-x, --csdata` list CSDATA segment
 - `-n, --no-color` disable colored output
 - `-d, --debug` debug SEAR request and response
+- `-j, --json` output as JSON
 - `-a, --all-json` output full raw SEAR JSON response
 
 ## Resource Commands
