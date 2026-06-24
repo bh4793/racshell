@@ -21,6 +21,7 @@ The following commands are currently implemented in `racshell/`.
 | `remove` | Group | Remove user from RACF group | `--json`, `--debug`, `--all-json`, `--no-color` |
 | `listgroup` | Group | Display RACF group details | `--users`, `--omvs`, `--csdata`, `--json`, `--all-json`, `--debug`, `--no-color` |
 | `adddataset` | Dataset | Create RACF dataset profile | `--generic`, `--traits`, `--json`, `--debug`, `--all-json`, `--no-color` |
+| `altdataset` | Dataset | Alter RACF dataset profile | `--generic`, `--traits`, `--json`, `--debug`, `--all-json`, `--no-color` |
 | `deletedataset` | Dataset | Delete RACF dataset profile | `--generic`, `--json`, `--debug`, `--all-json`, `--no-color` |
 | `listdataset` | Dataset | Display RACF dataset profile details | `--generic`, `--csdata`, `--json`, `--debug`, `--all-json`, `--no-color` |
 | `addresource` | Resource | Create RACF resource profile | `--traits`, `--json`, `--debug`, `--all-json`, `--no-color` |
@@ -221,6 +222,24 @@ Options:
 - `-d, --debug` debug SEAR request and response
 - `-j, --json` output as JSON
 - `-a, --all-json` output full raw SEAR JSON response
+
+### altdataset
+
+Create a RACF dataset profile.
+
+Usage:
+
+`altdataset <dataset> [options]`
+
+Options:
+
+- `-t, --traits` traits to set (repeatable), e.g. `base:universal_access=None base:owner=eswift`
+- `-g, --generic` treat the dataset name as a generic profile (e.g. `ESWIFT.TEST.**`)
+- `-n, --no-color` disable colored output
+- `-d, --debug` debug SEAR request and response
+- `-j, --json` output as JSON
+- `-a, --all-json` output full raw SEAR JSON response
+
 
 ### deletedataset
 
