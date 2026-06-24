@@ -23,6 +23,10 @@ The following commands are currently implemented in `racshell/`.
 | `adddataset` | Dataset | Create RACF dataset profile | `--generic`, `--traits`, `--debug`, `--all-json`, `--no-color` |
 | `deletedataset` | Dataset | Delete RACF dataset profile | `--generic`, `--debug`, `--all-json`, `--no-color` |
 | `listdataset` | Dataset | Display RACF dataset profile details | `--generic`, `--json`, `--debug`, `--all-json`, `--no-color` |
+| `addresource` | Resource | Create RACF resource profile | `--traits`, `--debug`, `--all-json`, `--no-color` |
+| `altresource` | Resource | Alter RACF resource profile | `--traits`, `--debug`, `--all-json`, `--no-color` |
+| `deleteresource` | Resource | Delete RACF resource profile | `--debug`, `--all-json`, `--no-color` |
+| `listresource` | Resource | Display RACF resource profile details | `--csdata`, `--json`, `--debug`, `--all-json`, `--no-color` |
 
 ## User Commands
 
@@ -235,6 +239,70 @@ Options:
 - `-g, --generic` treat the dataset name as a generic profile
 - `-n, --no-color` disable colored output
 - `-d, --debug` debug SEAR request and response
+- `-a, --all-json` output full raw SEAR JSON response
+
+## Resource Commands
+
+Resource profile administration and lookup commands.
+
+### addresource
+
+Create a RACF resource profile.
+
+Usage:
+
+`addresource <resource> <class> [options]`
+
+Options:
+
+- `-t, --traits` traits to set (repeatable), e.g. `base:owner=SECADM base:universal_access=None`
+- `-n, --no-color` disable colored output
+- `-d, --debug` debug SEAR request and response
+- `-a, --all-json` output full raw SEAR JSON response
+
+### altresource
+
+Alter an existing RACF resource profile.
+
+Usage:
+
+`altresource <resource> <class> [options]`
+
+Options:
+
+- `-t, --traits` traits to alter (repeatable), e.g. `base:owner=SECADM base:universal_access=None`
+- `-n, --no-color` disable colored output
+- `-d, --debug` debug SEAR request and response
+- `-a, --all-json` output full raw SEAR JSON response
+
+### deleteresource
+
+Delete a RACF resource profile.
+
+Usage:
+
+`deleteresource <resource> <class> [options]`
+
+Options:
+
+- `-n, --no-color` disable colored output
+- `-d, --debug` debug SEAR request and response
+- `-a, --all-json` output full raw SEAR JSON response
+
+### listresource
+
+Extract and display RACF resource profile details.
+
+Usage:
+
+`listresource <resource> <class> [options]`
+
+Options:
+
+- `-x, --csdata` list CSDATA segment
+- `-n, --no-color` disable colored output
+- `-d, --debug` debug SEAR request and response
+- `-j, --json` output as JSON
 - `-a, --all-json` output full raw SEAR JSON response
 
 
