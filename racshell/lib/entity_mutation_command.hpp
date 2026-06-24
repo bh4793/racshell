@@ -6,6 +6,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <cstddef>
 
 #include "sear/sear.h"
 #include "lib/command_helper.hpp"
@@ -13,7 +14,7 @@
 namespace racshell
 {
 
-    struct MutateEntityCommandSpec
+    struct EntityCommandSpec
     {
         const char *command_name;
         const char *operation;
@@ -22,20 +23,25 @@ namespace racshell
         const char *entity_argument;
         const char *entity_help;
         const char *entity_validation_error;
+        bool supports_traits;
         const char *traits_help;
         const char *success_label;
+        std::size_t max_name_length;
     };
 
-    inline int run_mutate_entity_command(int argc, char *argv[], const MutateEntityCommandSpec &spec)
+    inline int run_entity_command( int argc, char *argv[], const EntityCommandSpec &spec)
     {
         argparse::ArgumentParser program(spec.command_name);
 
         program.add_argument(spec.entity_argument)
             .help(spec.entity_help);
 
-        program.add_argument("-t", "--traits")
-            .help(spec.traits_help)
-            .nargs(argparse::nargs_pattern::any);
+        if (spec.supports_traits)
+        {
+            program.add_argument("-t", "--traits")
+                .help(spec.traits_help)
+                .nargs(argparse::nargs_pattern::any);
+        }
 
         add_no_color_argument(program);
         add_toggle_argument(program, "-d", "--debug", "debug sear request and response");
@@ -56,7 +62,7 @@ namespace racshell
         set_color_output_enabled(!program.get<bool>("no-color"));
 
         const std::string entity_value = program.get<std::string>(spec.entity_argument);
-        if (entity_value.length() > 8)
+        if (entity_value.length() > spec.max_name_length)
         {
             print_error(std::cerr, spec.entity_validation_error);
             return 1;
@@ -66,17 +72,22 @@ namespace racshell
         const bool json_output = program.get<bool>("json");
         const bool all_json = program.get<bool>("all-json");
 
-        nlohmann::json traits;
-        if (!parse_traits(program.get<std::vector<std::string>>("traits"), traits))
-        {
-            return 1;
-        }
-
         nlohmann::json request = {
             {"operation", spec.operation},
             {"admin_type", spec.admin_type},
-            {spec.entity_argument, entity_value},
-            {"traits", traits}};
+            {spec.entity_argument, entity_value}};
+
+        if (spec.supports_traits)
+        {
+            nlohmann::json traits;
+
+            if (!parse_traits( program.get<std::vector<std::string>>("traits"), traits))
+            {
+                return 1;
+            }
+
+            request["traits"] = traits;
+        }
 
         const std::string request_json = request.dump();
         sear_result_t *result = sear(request_json.c_str(), request_json.length(), debug);
@@ -100,6 +111,7 @@ namespace racshell
             nlohmann::json output;
             output[spec.entity_argument] = entity_value;
             output["status"] = spec.success_verb;
+
             std::cout << output.dump(2) << "\n";
         }
         else

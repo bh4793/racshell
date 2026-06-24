@@ -16,20 +16,25 @@ namespace racshell
         const char *success_label;
     };
 
-    inline int run_add_entity_command(int argc, char *argv[], const AddEntityCommandSpec &spec)
+    inline int run_add_entity_command(
+        int argc,
+        char *argv[],
+        const AddEntityCommandSpec &spec)
     {
-        const MutateEntityCommandSpec mutate_spec = {
-            spec.command_name,
-            "add",
-            "created",
-            spec.admin_type,
-            spec.entity_argument,
-            spec.entity_help,
-            spec.entity_validation_error,
-            spec.traits_help,
-            spec.success_label};
+        const EntityCommandSpec entity_spec = {
+            .command_name = spec.command_name,
+            .operation = "add",
+            .success_verb = "created",
+            .admin_type = spec.admin_type,
+            .entity_argument = spec.entity_argument,
+            .entity_help = spec.entity_help,
+            .entity_validation_error = spec.entity_validation_error,
+            .success_label = spec.success_label,
+            .max_name_length = 8,
+            .supports_traits = true,
+            .traits_help = spec.traits_help};
 
-        return run_mutate_entity_command(argc, argv, mutate_spec);
+        return run_entity_command(argc, argv, entity_spec);
     }
 
 } // namespace racshell
