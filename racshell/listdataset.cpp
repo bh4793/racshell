@@ -94,7 +94,7 @@ int main(int argc, char *argv[])
         const auto &access_list = base["base:access_list"];
         for (const auto &entry : access_list)
         {
-            DatasetAccessEntry access_entry;
+            AccessEntry access_entry;
             if (entry.is_object())
             {
                 if (entry.contains("base:access_type") && entry["base:access_type"].is_string())

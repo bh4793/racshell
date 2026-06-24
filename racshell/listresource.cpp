@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
     resource_data.base = sear_info.base;
     resource_data.profile = sear_info.profile;
     racshell::assign_string(sear_info.base, "base:owner", resource_data.owner);
-    racshell::assign_string(sear_info.base, "base:universal_access", resource_data.universal_access);
+    racshell::assign_string(sear_info.base, "base:universal_access", resource_data.uacc);
     
     if (csdata && sear_info.profile.contains("csdata") && sear_info.profile["csdata"].is_object())
     {
@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
     {
         for (const auto &entry : sear_info.profile["access_list"])
         {
-            ResourceAccessEntry access_entry;
+            AccessEntry access_entry;
             if (entry.contains("access_type"))
             {
                 access_entry.access_type = entry["access_type"];

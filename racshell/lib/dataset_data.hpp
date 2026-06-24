@@ -4,12 +4,7 @@
 #include <string>
 #include <vector>
 #include <nlohmann/json.hpp>
-
-struct DatasetAccessEntry
-{
-    std::string access_type;
-    std::string access_id;
-};
+#include "access_entry.hpp"
 
 struct DatasetData
 {
@@ -18,7 +13,7 @@ struct DatasetData
     std::string uacc;
     bool audited = false;
     int access_count = 0;
-    std::vector<DatasetAccessEntry> access_list;
+    std::vector<AccessEntry> access_list;
     nlohmann::json csdata;
 };
 

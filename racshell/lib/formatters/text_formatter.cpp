@@ -49,6 +49,24 @@ namespace
         }
     }
 
+    // Helper to append access list to text output
+    inline void append_access_list(std::stringstream &ss, const std::vector<AccessEntry> &access_list)
+    {
+        if (!access_list.empty())
+        {
+            ss << "Access List:\n";
+            for (const auto &entry : access_list)
+            {
+                ss << "  " << entry.access_type;
+                if (!entry.access_id.empty())
+                {
+                    ss << " (" << entry.access_id << ")";
+                }
+                ss << "\n";
+            }
+        }
+    }
+
 } // namespace
 
 std::string TextFormatter::format(const UserData &user)
@@ -185,21 +203,9 @@ std::string TextFormatter::format(const DatasetData &dataset)
         ss << "Access Count: " << dataset.access_count << "\n";
     }
 
-    if (!dataset.access_list.empty())
-    {
-        ss << "Access List:\n";
-        for (const auto &entry : dataset.access_list)
-        {
-            ss << "  " << entry.access_type;
-            if (!entry.access_id.empty())
-            {
-                ss << " (" << entry.access_id << ")";
-            }
-            ss << "\n";
-        }
-    }
-
     append_csdata(ss, dataset.csdata);
+
+    append_access_list(ss, dataset.access_list);
 
     return ss.str();
 }
@@ -211,28 +217,16 @@ std::string TextFormatter::format(const ResourceData &resource)
     ss << "Resource: " << resource.resource << "\n";
     ss << "Class: " << resource.resource_class << "\n";
     ss << "Owner: " << resource.owner << "\n";
-    ss << "UACC: " << resource.universal_access << "\n";
+    ss << "UACC: " << resource.uacc << "\n";
 
     if (resource.base.contains("base:create_date"))
     {
         ss << "Created: " << resource.base["base:create_date"] << "\n";
     }
 
-    if (!resource.access_list.empty())
-    {
-        ss << "Access List:\n";
-        for (const auto &entry : resource.access_list)
-        {
-            ss << "  " << entry.access_type;
-            if (!entry.access_id.empty())
-            {
-                ss << " (" << entry.access_id << ")";
-            }
-            ss << "\n";
-        }
-    }
-
     append_csdata(ss, resource.csdata);
+
+    append_access_list(ss, resource.access_list);
 
     return ss.str();
 }

@@ -4,22 +4,17 @@
 #include <string>
 #include <vector>
 #include <nlohmann/json.hpp>
-
-struct ResourceAccessEntry
-{
-    std::string access_type;
-    std::string access_id;
-};
+#include "access_entry.hpp"
 
 struct ResourceData
 {
     std::string resource;
     std::string resource_class;
     std::string owner;
-    std::string universal_access;
+    std::string uacc;
     nlohmann::json profile;
     nlohmann::json base;
-    std::vector<ResourceAccessEntry> access_list;
+    std::vector<AccessEntry> access_list;
     nlohmann::json csdata;
 };
 

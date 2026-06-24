@@ -1,5 +1,31 @@
 #include "output_formatter.hpp"
 
+namespace
+{
+
+    void add_if_present(nlohmann::json &output,
+                        const nlohmann::json &value,
+                        const char *key)
+    {
+        if (!value.is_null() && !value.empty())
+        {
+            output[key] = value;
+        }
+    }
+
+    inline void add_access_list_to_json(nlohmann::json &output, const std::vector<AccessEntry> &access_list)
+    {
+        if (!access_list.empty())
+        {
+            nlohmann::json access_array = nlohmann::json::array();
+            for (const auto &entry : access_list)
+            {
+                access_array.push_back({{"access_type", entry.access_type}, {"access_id", entry.access_id}});
+            }
+            output["access_list"] = access_array;
+        }
+    }
+}
 std::string JsonFormatter::format(const UserData &user)
 {
     nlohmann::json output;
@@ -23,21 +49,6 @@ std::string JsonFormatter::format(const UserData &user)
     add_if_present(output, user.csdata, "csdata");
 
     return output.dump(2);
-}
-
-namespace
-{
-
-    void add_if_present(nlohmann::json &output,
-                        const nlohmann::json &value,
-                        const char *key)
-    {
-        if (!value.is_null() && !value.empty())
-        {
-            output[key] = value;
-        }
-    }
-
 }
 
 std::string JsonFormatter::format(const GroupData &group)
@@ -89,6 +100,7 @@ std::string JsonFormatter::format(const DatasetData &dataset)
     }
 
     add_if_present(output, dataset.csdata, "csdata");
+    add_access_list_to_json(output, dataset.access_list);
 
     return output.dump(2);
 }
@@ -100,7 +112,7 @@ std::string JsonFormatter::format(const ResourceData &resource)
     output["resource"] = resource.resource;
     output["class"] = resource.resource_class;
     output["owner"] = resource.owner;
-    output["universal_access"] = resource.universal_access;
+    output["universal_access"] = resource.uacc;
 
     if (!resource.access_list.empty())
     {
@@ -113,6 +125,7 @@ std::string JsonFormatter::format(const ResourceData &resource)
     }
 
     add_if_present(output, resource.csdata, "csdata");
+    add_access_list_to_json(output, resource.access_list);
 
     return output.dump(2);
 }
