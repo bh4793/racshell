@@ -13,7 +13,7 @@
 namespace racshell
 {
 
-    struct ResourceMutateSpec
+    struct ResourceCommandSpec
     {
         const char *command_name;
         const char *operation;
@@ -22,7 +22,7 @@ namespace racshell
         const char *success_verb;
     };
 
-    inline int run_resource_mutation_command(int argc, char *argv[], const ResourceMutateSpec &spec)
+    inline int run_resource_command(int argc, char *argv[], const ResourceCommandSpec &spec)
     {
         argparse::ArgumentParser program(spec.command_name);
 
