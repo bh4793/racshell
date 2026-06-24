@@ -1,6 +1,6 @@
 #pragma once
 
-#include "lib/entity_mutation_command.hpp"
+#include "lib/entity_command.hpp"
 
 namespace racshell
 {
