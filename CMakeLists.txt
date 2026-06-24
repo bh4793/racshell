@@ -70,6 +70,9 @@ target_link_libraries(addresource racshell -static)
 add_executable(altresource "racshell/altresource.cpp")
 target_link_libraries(altresource racshell -static)
 
+add_executable(deleteresource "racshell/deleteresource.cpp")
+target_link_libraries(deleteresource racshell -static)
+
 add_custom_target(
     racshell_commands
     DEPENDS
@@ -88,4 +91,5 @@ add_custom_target(
     listdataset
     addresource
     altresource
+    deleteresource
 )
