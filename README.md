@@ -343,3 +343,6 @@ Options:
 - `-a, --all-json` output full raw SEAR JSON response
 
 
+### Permit
+
+TODO: to be added + add functionality to add a list of users+resource/datasets to be set
