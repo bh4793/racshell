@@ -228,3 +228,37 @@ std::string TextFormatter::format(const DatasetData &dataset)
 
     return ss.str();
 }
+
+std::string TextFormatter::format(const ResourceData &resource)
+{
+    std::stringstream ss;
+
+    ss << "Resource: " << resource.resource << "\n";
+    ss << "Class: " << resource.resource_class << "\n";
+    ss << "Owner: " << resource.owner << "\n";
+    ss << "UACC: " << resource.universal_access << "\n";
+
+    if (resource.base.contains("base:create_date"))
+    {
+        ss << "Created: " << resource.base["base:create_date"] << "\n";
+    }
+
+    if (!resource.csdata.is_null() && !resource.csdata.empty())
+    {
+        ss << "CSDATA:\n";
+        for (auto it = resource.csdata.begin(); it != resource.csdata.end(); ++it)
+        {
+            ss << "  " << format_security_key(it.key()) << ": ";
+            if (it.value().is_string())
+            {
+                ss << it.value().get<std::string>() << "\n";
+            }
+            else
+            {
+                ss << it.value().dump() << "\n";
+            }
+        }
+    }
+
+    return ss.str();
+}

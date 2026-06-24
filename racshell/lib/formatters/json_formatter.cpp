@@ -110,3 +110,20 @@ std::string JsonFormatter::format(const DatasetData &dataset)
 
     return output.dump(2);
 }
+
+std::string JsonFormatter::format(const ResourceData &resource)
+{
+    nlohmann::json output;
+
+    output["resource"] = resource.resource;
+    output["class"] = resource.resource_class;
+    output["owner"] = resource.owner;
+    output["universal_access"] = resource.universal_access;
+
+    if (!resource.csdata.is_null() && !resource.csdata.empty())
+    {
+        output["csdata"] = resource.csdata;
+    }
+
+    return output.dump(2);
+}
