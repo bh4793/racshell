@@ -1,6 +1,6 @@
 #pragma once
 
-#include "include/entity_command.hpp"
+#include "include/racshell/commands/entity_command.hpp"
 
 namespace racshell
 {

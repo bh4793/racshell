@@ -1,4 +1,4 @@
-#include "include/group_connection_command.hpp"
+#include "include/racshell/commands/group_connection_command.hpp"
 
 int main(int argc, char *argv[])
 {
@@ -12,4 +12,4 @@ int main(int argc, char *argv[])
         "connection traits to set, e.g. base:special=true"};
 
     return racshell::run_group_connection_command(argc, argv, spec);
-}
+}

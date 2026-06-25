@@ -9,7 +9,7 @@
 #include <cstddef>
 
 #include "sear/sear.h"
-#include "include/command_helper.hpp"
+#include "include/racshell/command_helper.hpp"
 
 namespace racshell
 {

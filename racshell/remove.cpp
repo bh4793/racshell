@@ -1,4 +1,4 @@
-#include "include/group_connection_command.hpp"
+#include "include/racshell/commands/group_connection_command.hpp"
 
 int main(int argc, char *argv[])
 {

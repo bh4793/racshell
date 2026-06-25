@@ -4,9 +4,9 @@
 #include <memory>
 
 #include "sear/sear.h"
-#include "include/output_formatter.hpp"
-#include "include/command_helper.hpp"
-#include "include/resource_data.hpp"
+#include "include/racshell/output_formatter.hpp"
+#include "include/racshell/command_helper.hpp"
+#include "include/racshell/data/resource_data.hpp"
 #include <nlohmann/json.hpp>
 
 int main(int argc, char *argv[])

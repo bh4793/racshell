@@ -1,4 +1,4 @@
-#include "include/delete_entity_command.hpp"
+#include "include/racshell/commands/delete_entity_command.hpp"
 
 int main(int argc, char *argv[])
 {

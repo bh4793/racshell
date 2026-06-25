@@ -1,4 +1,4 @@
-#include "include/resource_command.hpp"
+#include "include/racshell/commands/resource_command.hpp"
 
 int main(int argc, char *argv[])
 {
