@@ -76,6 +76,9 @@ target_link_libraries(altresource racshell -static)
 add_executable(deleteresource "racshell/deleteresource.cpp")
 target_link_libraries(deleteresource racshell -static)
 
+add_executable(searchresource "racshell/searchresource.cpp")
+target_link_libraries(searchresource racshell -static)
+
 add_executable(permitdataset "racshell/permitdataset.cpp")
 target_link_libraries(permitdataset racshell -static)
 
@@ -108,6 +111,7 @@ add_custom_target(
     addresource
     altresource
     deleteresource
+    searchresource
     permitdataset
     permitresource
     deletepermitdataset
