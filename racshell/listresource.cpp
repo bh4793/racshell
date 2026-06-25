@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
         {"class", resource_class}};
 
     const std::string request_json = request.dump();
-    std::cout << "Request: " << request_json << "\n";
+    std::cout << "Request: " << request_json << "\n"; // TODO: to remove
     sear_result_t *result = sear(request_json.c_str(), request_json.length(), debug);
 
     if (all_json)
