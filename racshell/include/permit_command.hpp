@@ -8,7 +8,7 @@
 #include <vector>
 
 #include "sear/sear.h"
-#include "lib/command_helper.hpp"
+#include "include/command_helper.hpp"
 
 namespace racshell
 {

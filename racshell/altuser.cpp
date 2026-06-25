@@ -1,4 +1,4 @@
-#include "lib/alter_entity_command.hpp"
+#include "include/alter_entity_command.hpp"
 
 int main(int argc, char *argv[])
 {

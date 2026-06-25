@@ -1,4 +1,4 @@
-#include "lib/group_connection_command.hpp"
+#include "include/group_connection_command.hpp"
 
 int main(int argc, char *argv[])
 {

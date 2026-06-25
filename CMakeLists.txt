@@ -10,14 +10,14 @@ add_subdirectory(sear)
 add_library(
     racshell
 
-    racshell/lib/formatters/text_formatter.cpp
-    racshell/lib/formatters/json_formatter.cpp
+    racshell/include/formatters/text_formatter.cpp
+    racshell/include/formatters/json_formatter.cpp
 )
 
 target_include_directories(
     racshell PUBLIC
     racshell
-    racshell/lib
+    racshell/include
     externals/argparse/
     externals/nlohmann/
 )

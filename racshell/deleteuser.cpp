@@ -1,4 +1,4 @@
-#include "lib/delete_entity_command.hpp"
+#include "include/delete_entity_command.hpp"
 
 int main(int argc, char *argv[])
 {

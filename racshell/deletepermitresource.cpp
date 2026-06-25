@@ -1,4 +1,4 @@
-#include "lib/permit_command.hpp"
+#include "include/permit_command.hpp"
 
 int main(int argc, char *argv[])
 {

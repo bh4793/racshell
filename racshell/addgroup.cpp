@@ -1,4 +1,4 @@
-#include "lib/add_entity_command.hpp"
+#include "include/add_entity_command.hpp"
 
 int main(int argc, char *argv[])
 {
