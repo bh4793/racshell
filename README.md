@@ -28,6 +28,11 @@ The following commands are currently implemented in `racshell/`.
 | `altresource` | Resource | Alter RACF resource profile | `--traits`, `--json`, `--debug`, `--all-json`, `--no-color` |
 | `deleteresource` | Resource | Delete RACF resource profile | `--json`, `--debug`, `--all-json`, `--no-color` |
 | `listresource` | Resource | Display RACF resource profile details | `--csdata`, `--access`, `--json`, `--debug`, `--all-json`, `--no-color` |
+| `searchresource` | Resource | Search RACF resource profiles by class | `--filter`, `--json`, `--debug`, `--all-json`, `--no-color` |
+| `permitdataset` | Permit | Grant access to dataset profile | `--generic`, `--traits`, `--json`, `--debug`, `--all-json`, `--no-color` |
+| `permitresource` | Permit | Grant access to resource profile | `--traits`, `--json`, `--debug`, `--all-json`, `--no-color` |
+| `deletepermitdataset` | Permit | Revoke access to dataset profile | `--generic`, `--json`, `--debug`, `--all-json`, `--no-color` |
+| `deletepermitresource` | Permit | Revoke access to resource profile | `--json`, `--debug`, `--all-json`, `--no-color` |
 
 ## User Commands
 
@@ -342,7 +347,88 @@ Options:
 - `-j, --json` output as JSON
 - `-a, --all-json` output full raw SEAR JSON response
 
+### searchresource
 
-### Permit
+Search for RACF resource profiles in a given class.
 
-TODO: to be added + add functionality to add a list of users+resource/datasets to be set
+Usage:
+
+`searchresource <class> [options]`
+
+Options:
+
+- `-f, --filter` filter resource profiles by name pattern (optional), e.g. `IRR`
+- `-n, --no-color` disable colored output
+- `-d, --debug` debug SEAR request and response
+- `-j, --json` output as JSON
+- `-a, --all-json` output full raw SEAR JSON response
+
+## Permit Commands
+
+Permit (access control list) administration and management commands.
+
+### permitdataset
+
+Grant a user access to a RACF dataset profile.
+
+Usage:
+
+`permitdataset <dataset> [--volume <volume>] <userid> [options]`
+
+Options:
+
+- `-g, --generic` treat the dataset name as a generic profile (e.g. `ESWIFT.TEST.**`)
+- `--volume` volume name for the dataset
+- `-t, --traits` permit traits (repeatable), e.g. `base:access=READ`
+- `-n, --no-color` disable colored output
+- `-d, --debug` debug SEAR request and response
+- `-j, --json` output as JSON
+- `-a, --all-json` output full raw SEAR JSON response
+
+### permitresource
+
+Grant a user access to a RACF resource profile.
+
+Usage:
+
+`permitresource <resource> <class> <userid> [options]`
+
+Options:
+
+- `-t, --traits` permit traits (repeatable), e.g. `base:access=READ`
+- `-n, --no-color` disable colored output
+- `-d, --debug` debug SEAR request and response
+- `-j, --json` output as JSON
+- `-a, --all-json` output full raw SEAR JSON response
+
+### deletepermitdataset
+
+Revoke a user's access to a RACF dataset profile.
+
+Usage:
+
+`deletepermitdataset <dataset> [--volume <volume>] <userid> [options]`
+
+Options:
+
+- `-g, --generic` treat the dataset name as a generic profile
+- `--volume` volume name for the dataset
+- `-n, --no-color` disable colored output
+- `-d, --debug` debug SEAR request and response
+- `-j, --json` output as JSON
+- `-a, --all-json` output full raw SEAR JSON response
+
+### deletepermitresource
+
+Revoke a user's access to a RACF resource profile.
+
+Usage:
+
+`deletepermitresource <resource> <class> <userid> [options]`
+
+Options:
+
+- `-n, --no-color` disable colored output
+- `-d, --debug` debug SEAR request and response
+- `-j, --json` output as JSON
+- `-a, --all-json` output full raw SEAR JSON response
