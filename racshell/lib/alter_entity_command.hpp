@@ -26,10 +26,10 @@ inline int run_alter_entity_command(int argc, char *argv[], const AlterEntityCom
             .entity_argument = spec.entity_argument,
             .entity_help = spec.entity_help,
             .entity_validation_error = spec.entity_validation_error,
-            .success_label = spec.success_label,
-            .max_name_length = 8,
             .supports_traits = true,
-            .traits_help = spec.traits_help};
+            .traits_help = spec.traits_help,
+            .success_label = spec.success_label,
+            .max_name_length = 8};
 
         return run_entity_command(argc, argv, entity_spec);
     }
