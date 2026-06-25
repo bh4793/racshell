@@ -1,0 +1,65 @@
+{
+    "version": 5,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 24
+    },
+    "configurePresets": [
+        {
+            "name": "default",
+            "displayName": "Default Preset",
+            "description": "Default preset, provides no platform specific features. Works for non-z/OS systems.",
+            "binaryDir": "${sourceDir}/build/default"
+        },
+        {
+            "name": "zos",
+            "displayName": "z/OS Preset",
+            "description": "Builds for z/OS systems, activates the IBM-Clang-based toolchain.",
+            "binaryDir": "${sourceDir}/build/zos",
+            "toolchainFile": "cmake/ibm-clang.cmake"
+        },
+        {
+            "name": "zos-pysear",
+            "inherits": "zos",
+            "binaryDir": "${sourceDir}/build/zos-pysear",
+            "cacheVariables": {
+                "SEAR_ENABLE_PYTHON": "on"
+            }
+        },
+        {
+            "name": "linux-test",
+            "displayName": "Linux Testing",
+            "description": "Used for unit testing under Linux",
+            "binaryDir": "${sourceDir}/build/linux",
+            "toolchainFile": "cmake/clang.cmake",
+            "cacheVariables": {
+                "SEAR_UNIT_TEST": "ON"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "default",
+            "configurePreset": "default"
+        },
+        {
+            "name": "zos",
+            "configurePreset": "zos"
+        },
+        {
+            "name": "zos-sear",
+            "inherits": "zos",
+            "targets": [ "sear" ]
+        },
+        {
+            "name": "zos-pysear",
+            "inherits": "zos",
+            "configurePreset": "zos-pysear",
+            "targets": [ "pysear" ]
+        },
+        {
+            "name": "linux-test",
+            "configurePreset": "linux-test"
+        }
+    ]
+}
