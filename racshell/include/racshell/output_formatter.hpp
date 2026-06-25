@@ -2,10 +2,10 @@
 #define OUTPUT_FORMATTER_HPP
 
 #include <string>
-#include "racshell/include/racshell/data/user_data.hpp"
-#include "racshell/include/racshell/data/group_data.hpp"
-#include "racshell/include/racshell/data/dataset_data.hpp"
-#include "racshell/include/racshell/data/resource_data.hpp"
+#include "include/racshell/data/user_data.hpp"
+#include "include/racshell/data/group_data.hpp"
+#include "include/racshell/data/dataset_data.hpp"
+#include "include/racshell/data/resource_data.hpp"
 
 class OutputFormatter
 {
