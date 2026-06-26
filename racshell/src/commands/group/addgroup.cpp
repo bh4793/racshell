@@ -1,20 +1,8 @@
 #include "include/racshell/commands/add_entity_command.hpp"
 
-#include <string>
-#include <vector>
-
-struct TraitArg
-{
-    std::string short_flag;
-    std::string long_flag;
-    std::string trait_key;
-    std::string help;
-    bool is_flag = false;
-};
-
 int main(int argc, char *argv[])
 {
-    const std::vector<TraitArg> trait_args = {
+    const std::vector<racshell::TraitArg> trait_args = {
         {"-s", "--superior-group", "base:superior_group", "superior group for the new group"},
         {"-o", "--owner",          "base:owner",          "owner of the new group"},
         {"-g", "--omvs-gid",       "omvs:gid",            "z/OS Unix group ID (GID) for the new group"},
@@ -31,30 +19,11 @@ int main(int argc, char *argv[])
         .success_label = "Group",
         .setup_extra_args = [trait_args](argparse::ArgumentParser &program)
         {
-            for (const auto &t : trait_args)
-            {
-                auto &arg = t.short_flag.empty()
-                    ? program.add_argument(t.long_flag)
-                    : program.add_argument(t.short_flag, t.long_flag);
-                arg.help(t.help);
-                if (t.is_flag)
-                    arg.flag();
-            }
+            racshell::register_trait_args(program, trait_args);
         },
         .apply_extra_args = [trait_args](argparse::ArgumentParser &program, nlohmann::json &request)
         {
-            for (const auto &t : trait_args)
-            {
-                if (t.is_flag)
-                {
-                    if (program.get<bool>(t.long_flag))
-                        request["traits"][t.trait_key] = true;
-                }
-                else if (auto v = program.present<std::string>(t.long_flag))
-                {
-                    request["traits"][t.trait_key] = *v;
-                }
-            }
+            racshell::apply_trait_args(program, request, trait_args);
         }};
 
     return racshell::run_add_entity_command(argc, argv, spec);

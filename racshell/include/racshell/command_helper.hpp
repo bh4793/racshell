@@ -421,4 +421,59 @@ namespace racshell
         }
     }
 
+    /**
+     * @brief Describes a single CLI flag that maps directly to a SEAR trait.
+     */
+    struct TraitArg
+    {
+        std::string short_flag;
+        std::string long_flag;
+        std::string trait_key;
+        std::string help;
+        bool is_flag = false;
+    };
+
+    /**
+     * @brief Registers a list of trait arguments with an argparse program.
+     * @param program Target argument parser.
+     * @param trait_args List of trait argument descriptors.
+     */
+    inline void register_trait_args(argparse::ArgumentParser &program,
+                                    const std::vector<TraitArg> &trait_args)
+    {
+        for (const auto &t : trait_args)
+        {
+            auto &arg = t.short_flag.empty()
+                ? program.add_argument(t.long_flag)
+                : program.add_argument(t.short_flag, t.long_flag);
+            arg.help(t.help);
+            if (t.is_flag)
+                arg.flag();
+        }
+    }
+
+    /**
+     * @brief Applies parsed trait argument values into a SEAR request JSON.
+     * @param program Parsed argument parser.
+     * @param request SEAR request JSON object to populate.
+     * @param trait_args List of trait argument descriptors.
+     */
+    inline void apply_trait_args(argparse::ArgumentParser &program,
+                                 nlohmann::json &request,
+                                 const std::vector<TraitArg> &trait_args)
+    {
+        for (const auto &t : trait_args)
+        {
+            if (t.is_flag)
+            {
+                if (program.get<bool>(t.long_flag))
+                    request["traits"][t.trait_key] = true;
+            }
+            else if (auto v = program.present<std::string>(t.long_flag))
+            {
+                request["traits"][t.trait_key] = *v;
+            }
+        }
+    }
+
 } // namespace racshell
