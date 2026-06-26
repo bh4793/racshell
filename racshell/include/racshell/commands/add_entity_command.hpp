@@ -14,6 +14,8 @@ namespace racshell
         const char *entity_validation_error;
         const char *traits_help;
         const char *success_label;
+        std::function<void(argparse::ArgumentParser &)> setup_extra_args = nullptr;
+        std::function<void(argparse::ArgumentParser &, nlohmann::json &)> apply_extra_args = nullptr;
     };
 
     inline int run_add_entity_command(
@@ -32,7 +34,9 @@ namespace racshell
             .supports_traits = true,
             .traits_help = spec.traits_help,
             .success_label = spec.success_label,
-            .max_name_length = 8};
+            .max_name_length = 8,
+            .setup_extra_args = spec.setup_extra_args,
+            .apply_extra_args = spec.apply_extra_args};
 
         return run_entity_command(argc, argv, entity_spec);
     }

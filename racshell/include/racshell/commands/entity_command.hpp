@@ -3,6 +3,7 @@
 #include <argparse.hpp>
 #include <nlohmann/json.hpp>
 
+#include <functional>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -27,6 +28,8 @@ namespace racshell
         const char *traits_help;
         const char *success_label;
         std::size_t max_name_length;
+        std::function<void(argparse::ArgumentParser &)> setup_extra_args = nullptr;
+        std::function<void(argparse::ArgumentParser &, nlohmann::json &)> apply_extra_args = nullptr;
     };
 
     inline int run_entity_command( int argc, char *argv[], const EntityCommandSpec &spec)
@@ -41,6 +44,11 @@ namespace racshell
             program.add_argument("-t", "--traits")
                 .help(spec.traits_help)
                 .nargs(argparse::nargs_pattern::any);
+        }
+
+        if (spec.setup_extra_args)
+        {
+            spec.setup_extra_args(program);
         }
 
         add_no_color_argument(program);
@@ -87,6 +95,11 @@ namespace racshell
             }
 
             request["traits"] = traits;
+        }
+
+        if (spec.apply_extra_args)
+        {
+            spec.apply_extra_args(program, request);
         }
 
         const std::string request_json = request.dump();
