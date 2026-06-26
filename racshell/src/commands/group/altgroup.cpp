@@ -6,7 +6,7 @@ int main(int argc, char *argv[])
         {"-s", "--superior-group", "base:superior_group", "superior group for the group"},
         {"-o", "--owner",          "base:owner",          "owner of the group"},
         {"-g", "--omvs-gid",       "omvs:gid",            "z/OS Unix group ID (GID) for the group"},
-        {"",   "--omvs-auto-gid",  "omvs:auto_gid",       "automatically assign a z/OS Unix GID to the group", true},
+        {"-G", "--omvs-auto-gid",  "omvs:auto_gid",       "automatically assign a z/OS Unix GID to the group", true},
     };
 
     const racshell::AlterEntityCommandSpec spec = {
