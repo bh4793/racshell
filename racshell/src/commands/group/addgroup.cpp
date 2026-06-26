@@ -14,12 +14,31 @@ int main(int argc, char *argv[])
         {
             program.add_argument("-s", "--superior-group")
                 .help("superior group for the new group");
+            program.add_argument("-o", "--owner")
+                .help("owner of the new group");
+            program.add_argument("-g", "--omvs-gid")
+                .help("z/OS Unix group ID (GID) for the new group");
+            program.add_argument("--omvs-auto-gid")
+                .help("automatically assign a z/OS Unix GID to the new group")
+                .flag();
         },
         .apply_extra_args = [](argparse::ArgumentParser &program, nlohmann::json &request)
         {
             if (auto v = program.present("--superior-group"))
             {
                 request["traits"]["base:superior_group"] = *v;
+            }
+            if (auto v = program.present("--owner"))
+            {
+                request["traits"]["base:owner"] = *v;
+            }
+            if (auto v = program.present("--omvs-gid"))
+            {
+                request["traits"]["omvs:gid"] = *v;
+            }
+            if (program.get<bool>("--omvs-auto-gid"))
+            {
+                request["traits"]["omvs:auto_gid"] = true;
             }
         }};
 
