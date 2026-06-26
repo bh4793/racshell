@@ -1,4 +1,4 @@
-#include "include/add_entity_command.hpp"
+#include "include/racshell/commands/add_entity_command.hpp"
 
 int main(int argc, char *argv[])
 {
