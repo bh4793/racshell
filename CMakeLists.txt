@@ -38,6 +38,9 @@ target_link_libraries(deleteuser racshell -static)
 add_executable(listuser "racshell/src/commands/user/listuser.cpp")
 target_link_libraries(listuser racshell -static)
 
+add_executable(searchusers "racshell/src/commands/user/searchusers.cpp")
+target_link_libraries(searchusers racshell -static)
+
 # Group commands
 add_executable(addgroup "racshell/src/commands/group/addgroup.cpp")
 target_link_libraries(addgroup racshell -static)
@@ -102,6 +105,7 @@ add_custom_target(
     racshell_commands
     DEPENDS
     listuser
+    searchusers
     listgroup
     adduser
     addgroup
