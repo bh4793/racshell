@@ -54,6 +54,9 @@ target_link_libraries(deletegroup racshell -static)
 add_executable(listgroup "racshell/src/commands/group/listgroup.cpp")
 target_link_libraries(listgroup racshell -static)
 
+add_executable(searchgroups "racshell/src/commands/group/searchgroups.cpp")
+target_link_libraries(searchgroups racshell -static)
+
 add_executable(connect "racshell/src/commands/group/connect.cpp")
 target_link_libraries(connect racshell -static)
 
@@ -72,6 +75,9 @@ target_link_libraries(deletedataset racshell -static)
 
 add_executable(listdataset "racshell/src/commands/dataset/listdataset.cpp")
 target_link_libraries(listdataset racshell -static)
+
+add_executable(searchdatasets "racshell/src/commands/dataset/searchdatasets.cpp")
+target_link_libraries(searchdatasets racshell -static)
 
 add_executable(permitdataset "racshell/src/commands/dataset/permitdataset.cpp")
 target_link_libraries(permitdataset racshell -static)
@@ -107,6 +113,7 @@ add_custom_target(
     listuser
     searchusers
     listgroup
+    searchgroups
     adduser
     addgroup
     deleteuser
@@ -118,6 +125,7 @@ add_custom_target(
     adddataset
     deletedataset
     listdataset
+    searchdatasets
     listresource
     addresource
     altresource
