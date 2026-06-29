@@ -188,6 +188,7 @@ namespace
         }
     }
 
+    //TODO: Move this to formatter class
     void print_user_list(const std::string &heading, const nlohmann::json &users)
     {
         std::cout << heading << "\n";
