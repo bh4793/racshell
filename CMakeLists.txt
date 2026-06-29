@@ -57,6 +57,9 @@ target_link_libraries(listgroup racshell -static)
 add_executable(searchgroups "racshell/src/commands/group/searchgroups.cpp")
 target_link_libraries(searchgroups racshell -static)
 
+add_executable(comparegroups "racshell/src/commands/group/comparegroups.cpp")
+target_link_libraries(comparegroups racshell -static)
+
 add_executable(connect "racshell/src/commands/group/connect.cpp")
 target_link_libraries(connect racshell -static)
 
@@ -114,6 +117,7 @@ add_custom_target(
     searchusers
     listgroup
     searchgroups
+    comparegroups
     adduser
     addgroup
     deleteuser

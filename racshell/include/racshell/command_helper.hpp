@@ -476,4 +476,22 @@ namespace racshell
         }
     }
 
+    /**
+     * @brief Converts a JSON value into stable human-readable text.
+     * @param value JSON value to format.
+     * @return "<missing>" for null, plain string for JSON strings, dump() for other types.
+     */
+    inline std::string value_to_text(const nlohmann::json &value)
+    {
+        if (value.is_null())
+        {
+            return "<missing>";
+        }
+        if (value.is_string())
+        {
+            return value.get<std::string>();
+        }
+        return value.dump();
+    }
+
 } // namespace racshell

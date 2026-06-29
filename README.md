@@ -22,6 +22,7 @@ The following commands are currently implemented in `racshell/`.
 | `remove` | Group | Remove user from RACF group | `--json`, `--debug`, `--all-json`, `--no-color` |
 | `listgroup` | Group | Display RACF group details | `--users`, `--omvs`, `--csdata`, `--json`, `--all-json`, `--debug`, `--no-color` |
 | `searchgroups` | Group | Search RACF groups | `--filter`, `--json`, `--debug`, `--all-json`, `--no-color` |
+| `comparegroups` | Group | Compare two RACF groups | `--users`, `--omvs`, `--csdata`, `--json`, `--all-json`, `--debug`, `--no-color` |
 | `adddataset` | Dataset | Create RACF dataset profile | `--generic`, `--traits`, `--json`, `--debug`, `--all-json`, `--no-color` |
 | `altdataset` | Dataset | Alter RACF dataset profile | `--generic`, `--traits`, `--json`, `--debug`, `--all-json`, `--no-color` |
 | `deletedataset` | Dataset | Delete RACF dataset profile | `--generic`, `--json`, `--debug`, `--all-json`, `--no-color` |
@@ -210,6 +211,24 @@ Options:
 - `-d, --debug` debug SEAR request and response
 - `-j, --json` output as JSON
 - `-a, --all-json` output full raw SEAR JSON response
+
+### comparegroups
+
+Compare two RACF groups and report any differences in their extracted data.
+
+Usage:
+
+`comparegroups <left-group> <right-group> [options]`
+
+Options:
+
+- `-u, --users` compare connected users
+- `-o, --omvs` compare OMVS segment
+- `-x, --csdata` compare CSDATA segment
+- `-n, --no-color` disable colored output
+- `-d, --debug` debug SEAR request and response
+- `-j, --json` output differences as JSON
+- `-a, --all-json` output full raw SEAR JSON responses
 
 ### connect
 
