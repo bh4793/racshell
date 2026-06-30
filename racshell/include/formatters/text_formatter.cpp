@@ -1,4 +1,5 @@
 #include "racshell/output_formatter.hpp"
+#include "include/racshell/command_helper.hpp"
 #include <cctype>
 #include <sstream>
 
