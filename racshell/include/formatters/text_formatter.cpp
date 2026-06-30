@@ -78,6 +78,15 @@ namespace
         }
     }
 
+    void print_group_list(std::stringstream &ss, const std::string &heading, const nlohmann::json &groups)
+    {
+        ss << heading << "\n";
+        for (const auto &group : groups)
+        {
+            ss << "    " << racshell::value_to_text(group) << "\n";
+        }
+    }
+
     
     void append_comparison_value(std::stringstream &ss,
                                  const std::string &left_groupid,
@@ -311,6 +320,60 @@ std::string TextFormatter::format(const GroupComparisonData &comparison)
         append_comparison_value(ss,
                                 comparison.left.groupid,
                                 comparison.right.groupid,
+                                it.value(),
+                                it.key());
+    }
+
+    return ss.str();
+}
+
+std::string TextFormatter::format(const UserComparisonData &comparison)
+{
+    std::stringstream ss;
+
+    if (comparison.raw_json_output)
+    {
+        ss << "Left response:\n";
+        ss << (!comparison.left.response_json.is_null() && !comparison.left.response_json.empty()
+                   ? comparison.left.response_json.dump(2)
+                   : comparison.left.raw_response_json)
+           << "\n";
+        ss << "Right response:\n";
+        ss << (!comparison.right.response_json.is_null() && !comparison.right.response_json.empty()
+                   ? comparison.right.response_json.dump(2)
+                   : comparison.right.raw_response_json)
+           << "\n";
+        return ss.str();
+    }
+
+    if (comparison.identical)
+    {
+        racshell::print_success_prefix(ss);
+        ss << "Users " << comparison.left.userid << " and " << comparison.right.userid
+           << " are identical for compared fields.\n";
+        return ss.str();
+    }
+
+    ss << "Comparing users " << comparison.left.userid << " and " << comparison.right.userid << ":\n";
+    for (auto it = comparison.differences.begin(); it != comparison.differences.end(); ++it)
+    {
+        if (it.key() == "groups")
+        {
+            const nlohmann::json &groups = it.value();
+            if (groups.contains("only_in_left"))
+            {
+                print_group_list(ss, "  Groups only in " + comparison.left.userid + ":", groups["only_in_left"]);
+            }
+            if (groups.contains("only_in_right"))
+            {
+                print_group_list(ss, "  Groups only in " + comparison.right.userid + ":", groups["only_in_right"]);
+            }
+            continue;
+        }
+
+        append_comparison_value(ss,
+                                comparison.left.userid,
+                                comparison.right.userid,
                                 it.value(),
                                 it.key());
     }

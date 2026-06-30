@@ -15,6 +15,7 @@ The following commands are currently implemented in `racshell/`.
 | `deleteuser` | User | Delete RACF user | `--json`, `--debug`, `--all-json`, `--no-color` |
 | `listuser` | User | Display RACF user details | `--groups`, `--tso`, `--kerberos`, `--cics`, `--omvs`, `--security`, `--csdata`, `--json`, `--all-json`, `--debug`, `--no-color` |
 | `searchusers` | User | Search RACF users | `--filter`, `--json`, `--debug`, `--all-json`, `--no-color` |
+| `compareusers` | User | Compare two RACF users | `--json`, `--all-json`, `--debug`, `--no-color` |
 | `addgroup` | Group | Create RACF group | `--traits`, `--json`, `--debug`, `--all-json`, `--no-color` |
 | `altgroup` | Group | Alter RACF group | `--traits`, `--json`, `--debug`, `--all-json`, `--no-color` |
 | `deletegroup` | Group | Delete RACF group | `--json`, `--debug`, `--all-json`, `--no-color` |
@@ -126,6 +127,21 @@ Options:
 - `-d, --debug` debug SEAR request and response
 - `-j, --json` output as JSON
 - `-a, --all-json` output full raw SEAR JSON response
+
+### compareusers
+
+Compare two RACF users and report any differences in their extracted data.
+
+Usage:
+
+`compareusers <left-user> <right-user> [options]`
+
+Options:
+
+- `-n, --no-color` disable colored output
+- `-d, --debug` debug SEAR request and response
+- `-j, --json` output differences as JSON
+- `-a, --all-json` output full raw SEAR JSON responses
 
 ### Group Commands
 
