@@ -510,18 +510,23 @@ namespace racshell
 
         for (const auto &user : users)
         {
-            if (!user.is_object() || !user.contains("userid"))
+            if (!user.is_object())
             {
                 continue;
             }
 
-            const std::string userid = value_to_text(user["userid"]);
+            const std::string userid = user.contains("base:connected_userid")
+                                           ? value_to_text(user["base:connected_userid"])
+                                           : (user.contains("userid") ? value_to_text(user["userid"]) : std::string());
             if (userid.empty() || userid == "<missing>")
             {
                 continue;
             }
 
-            result[userid] = value_to_text(user.value("authority", nlohmann::json()));
+            const nlohmann::json authority_value = user.contains("base:connected_user_authority")
+                                                       ? user["base:connected_user_authority"]
+                                                       : (user.contains("authority") ? user["authority"] : nlohmann::json());
+            result[userid] = value_to_text(authority_value);
         }
 
         return result;
