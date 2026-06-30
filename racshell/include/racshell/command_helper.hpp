@@ -2,6 +2,7 @@
 
 #include <argparse.hpp>
 #include <nlohmann/json.hpp>
+#include <map>
 #include <string>
 #include <iostream>
 #include <algorithm>
@@ -492,6 +493,38 @@ namespace racshell
             return value.get<std::string>();
         }
         return value.dump();
+    }
+
+    /**
+     * @brief Converts a connected_users JSON array into a userid-to-authority map.
+     * @param users JSON array from a group extract response.
+     * @return Map of userid to authority, ignoring malformed entries.
+     */
+    inline std::map<std::string, std::string> to_user_map(const nlohmann::json &users)
+    {
+        std::map<std::string, std::string> result;
+        if (!users.is_array())
+        {
+            return result;
+        }
+
+        for (const auto &user : users)
+        {
+            if (!user.is_object() || !user.contains("userid"))
+            {
+                continue;
+            }
+
+            const std::string userid = value_to_text(user["userid"]);
+            if (userid.empty() || userid == "<missing>")
+            {
+                continue;
+            }
+
+            result[userid] = value_to_text(user.value("authority", nlohmann::json()));
+        }
+
+        return result;
     }
 
 } // namespace racshell
