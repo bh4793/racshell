@@ -25,6 +25,42 @@ namespace
             output["access_list"] = access_array;
         }
     }
+
+    nlohmann::json format_group_comparison_json(const GroupComparisonData &comparison)
+    {
+        if (comparison.raw_json_output)
+        {
+            nlohmann::json output = {
+                {"left_group", comparison.left.groupid},
+                {"right_group", comparison.right.groupid}};
+
+            if (!comparison.left.response_json.is_null() && !comparison.left.response_json.empty())
+            {
+                output["left_response"] = comparison.left.response_json;
+            }
+            else
+            {
+                output["left_response_raw"] = comparison.left.raw_response_json;
+            }
+
+            if (!comparison.right.response_json.is_null() && !comparison.right.response_json.empty())
+            {
+                output["right_response"] = comparison.right.response_json;
+            }
+            else
+            {
+                output["right_response_raw"] = comparison.right.raw_response_json;
+            }
+
+            return output;
+        }
+
+        return {
+            {"left_group", comparison.left.groupid},
+            {"right_group", comparison.right.groupid},
+            {"identical", comparison.identical},
+            {"differences", comparison.differences}};
+    }
 }
 std::string JsonFormatter::format(const UserData &user)
 {
@@ -128,4 +164,9 @@ std::string JsonFormatter::format(const ResourceData &resource)
     add_access_list_to_json(output, resource.access_list);
 
     return output.dump(2);
+}
+
+std::string JsonFormatter::format(const GroupComparisonData &comparison)
+{
+    return format_group_comparison_json(comparison).dump(2);
 }

@@ -67,6 +67,28 @@ namespace
         }
     }
 
+    void print_user_list(std::stringstream &ss, const std::string &heading, const nlohmann::json &users)
+    {
+        ss << heading << "\n";
+        for (const auto &user : users)
+        {
+            ss << "    " << user.value("userid", "")
+               << " (" << user.value("authority", "") << ")\n";
+        }
+    }
+
+    
+    void append_comparison_value(std::stringstream &ss,
+                                 const std::string &left_groupid,
+                                 const std::string &right_groupid,
+                                 const nlohmann::json &difference,
+                                 const std::string &label)
+    {
+        ss << "  " << label << ": "
+           << left_groupid << "='" << racshell::value_to_text(difference.contains("left") ? difference["left"] : nlohmann::json())
+           << "', " << right_groupid << "='" << racshell::value_to_text(difference.contains("right") ? difference["right"] : nlohmann::json()) << "'\n";
+    }
+
 } // namespace
 
 std::string TextFormatter::format(const UserData &user)
@@ -227,6 +249,70 @@ std::string TextFormatter::format(const ResourceData &resource)
     append_csdata(ss, resource.csdata);
 
     append_access_list(ss, resource.access_list);
+
+    return ss.str();
+}
+
+std::string TextFormatter::format(const GroupComparisonData &comparison)
+{
+    std::stringstream ss;
+
+    if (comparison.raw_json_output)
+    {
+        ss << "Left response:\n";
+        ss << (!comparison.left.response_json.is_null() && !comparison.left.response_json.empty()
+                   ? comparison.left.response_json.dump(2)
+                   : comparison.left.raw_response_json)
+           << "\n";
+        ss << "Right response:\n";
+        ss << (!comparison.right.response_json.is_null() && !comparison.right.response_json.empty()
+                   ? comparison.right.response_json.dump(2)
+                   : comparison.right.raw_response_json)
+           << "\n";
+        return ss.str();
+    }
+
+    if (comparison.identical)
+    {
+        racshell::print_success_prefix(ss);
+        ss << "Groups " << comparison.left.groupid << " and " << comparison.right.groupid
+           << " are identical for compared fields.\n";
+        return ss.str();
+    }
+
+    ss << "Comparing groups " << comparison.left.groupid << " and " << comparison.right.groupid << ":\n";
+    for (auto it = comparison.differences.begin(); it != comparison.differences.end(); ++it)
+    {
+        if (it.key() == "connected_users")
+        {
+            const nlohmann::json &users = it.value();
+            if (users.contains("only_in_left"))
+            {
+                print_user_list(ss, "  Users only in " + comparison.left.groupid + ":", users["only_in_left"]);
+            }
+            if (users.contains("only_in_right"))
+            {
+                print_user_list(ss, "  Users only in " + comparison.right.groupid + ":", users["only_in_right"]);
+            }
+            if (users.contains("authority_mismatches"))
+            {
+                ss << "  User authority differences\n";
+                for (const auto &mismatch : users["authority_mismatches"])
+                {
+                    ss << "    " << mismatch.value("userid", "")
+                       << ": " << comparison.left.groupid << "='" << mismatch.value("left", "")
+                       << "', " << comparison.right.groupid << "='" << mismatch.value("right", "") << "'\n";
+                }
+            }
+            continue;
+        }
+
+        append_comparison_value(ss,
+                                comparison.left.groupid,
+                                comparison.right.groupid,
+                                it.value(),
+                                it.key());
+    }
 
     return ss.str();
 }
