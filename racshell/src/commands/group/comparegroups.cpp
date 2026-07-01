@@ -7,78 +7,14 @@
 #include <string>
 #include <vector>
 
-#include "sear/sear.h"
 #include "include/racshell/command_helper.hpp"
 #include "racshell/output_formatter.hpp"
 
 namespace
 {
-
-    struct RawGroupResponse
-    {
-        std::string groupid;
-        std::string result_json;
-    };
-
-    struct ExtractedGroup
-    {
-        std::string groupid;
-        nlohmann::json profile;
-        nlohmann::json base;
-    };
-
-    nlohmann::json get_object_value(const nlohmann::json &object, const char *key);
-
-    void add_difference(nlohmann::json &differences,
-                        const char *label,
-                        const nlohmann::json &left,
-                        const nlohmann::json &right);
-
-    void add_connected_user_differences(const ExtractedGroup &left_group,
-                                        const ExtractedGroup &right_group,
+    void add_connected_user_differences(const nlohmann::json &left_base,
+                                        const nlohmann::json &right_base,
                                         nlohmann::json &differences);
-
-    RawGroupResponse execute_group_extract(const std::string &groupid, bool debug)
-    {
-        const nlohmann::json request = {
-            {"operation", "extract"},
-            {"admin_type", "group"},
-            {"group", groupid}};
-
-        const std::string request_json = request.dump();
-        sear_result_t *result = sear(request_json.c_str(), request_json.length(), debug);
-
-        RawGroupResponse response = {.groupid = groupid};
-        if (result != nullptr && result->result_json != nullptr)
-        {
-            response.result_json = result->result_json;
-        }
-        return response;
-    }
-
-    bool parse_group_extract(const RawGroupResponse &raw_response,
-                             ExtractedGroup &group,
-                             std::string &error_message)
-    {
-        if (raw_response.result_json.empty())
-        {
-            error_message = "No response returned for group " + raw_response.groupid;
-            return false;
-        }
-
-        const racshell::SearResponseInfo info =
-            racshell::validate_sear_response(raw_response.result_json.c_str(), "group");
-        if (!info.success)
-        {
-            error_message = info.error_message;
-            return false;
-        }
-
-        group.groupid = raw_response.groupid;
-        group.profile = info.profile;
-        group.base = info.base;
-        return true;
-    }
 
     GroupComparisonData build_group_comparison_data(const std::string &left_groupid,
                                                     const std::string &right_groupid,
@@ -96,22 +32,20 @@ namespace
         comparison.compare_csdata = compare_csdata;
         comparison.raw_json_output = raw_json_output;
 
-        const RawGroupResponse left_raw = execute_group_extract(left_groupid, debug);
-        const RawGroupResponse right_raw = execute_group_extract(right_groupid, debug);
-        comparison.left.raw_response_json = left_raw.result_json;
-        comparison.right.raw_response_json = right_raw.result_json;
+        comparison.left.raw_response_json = racshell::execute_extract_request("group", "group", left_groupid, debug);
+        comparison.right.raw_response_json = racshell::execute_extract_request("group", "group", right_groupid, debug);
 
         if (raw_json_output)
         {
             nlohmann::json left_response;
             std::string parse_error;
-            if (racshell::parse_sear_response_json(left_raw.result_json.c_str(), left_response, parse_error))
+            if (racshell::parse_sear_response_json(comparison.left.raw_response_json.c_str(), left_response, parse_error))
             {
                 comparison.left.response_json = left_response;
             }
 
             nlohmann::json right_response;
-            if (racshell::parse_sear_response_json(right_raw.result_json.c_str(), right_response, parse_error))
+            if (racshell::parse_sear_response_json(comparison.right.raw_response_json.c_str(), right_response, parse_error))
             {
                 comparison.right.response_json = right_response;
             }
@@ -119,95 +53,84 @@ namespace
             return comparison;
         }
 
-        ExtractedGroup left_group;
-        ExtractedGroup right_group;
+        nlohmann::json left_profile;
+        nlohmann::json left_base;
+        nlohmann::json right_profile;
+        nlohmann::json right_base;
         std::string error_message;
-        if (!parse_group_extract(left_raw, left_group, error_message))
+        if (!racshell::parse_extract_payload(comparison.left.raw_response_json,
+                                             "group",
+                                             left_groupid,
+                                             left_profile,
+                                             left_base,
+                                             error_message))
         {
             throw std::runtime_error(left_groupid + ": " + error_message);
         }
 
-        if (!parse_group_extract(right_raw, right_group, error_message))
+        if (!racshell::parse_extract_payload(comparison.right.raw_response_json,
+                                             "group",
+                                             right_groupid,
+                                             right_profile,
+                                             right_base,
+                                             error_message))
         {
             throw std::runtime_error(right_groupid + ": " + error_message);
         }
 
-        comparison.left.profile = left_group.profile;
-        comparison.left.base = left_group.base;
-        comparison.right.profile = right_group.profile;
-        comparison.right.base = right_group.base;
+        comparison.left.profile = left_profile;
+        comparison.left.base = left_base;
+        comparison.right.profile = right_profile;
+        comparison.right.base = right_base;
 
-        add_difference(comparison.differences, "owner",
-                       get_object_value(left_group.base, "base:owner"),
-                       get_object_value(right_group.base, "base:owner"));
-        add_difference(comparison.differences, "created_date",
-                       get_object_value(left_group.base, "base:create_date"),
-                       get_object_value(right_group.base, "base:create_date"));
-        add_difference(comparison.differences, "superior_group",
-                       get_object_value(left_group.base, "base:superior_group"),
-                       get_object_value(right_group.base, "base:superior_group"));
-        add_difference(comparison.differences, "installation_data",
-                       get_object_value(left_group.base, "base:installation_data"),
-                       get_object_value(right_group.base, "base:installation_data"));
-        add_difference(comparison.differences, "universal",
-                       get_object_value(left_group.base, "base:universal"),
-                       get_object_value(right_group.base, "base:universal"));
-        add_difference(comparison.differences, "terminal_universal_access",
-                       get_object_value(left_group.base, "base:terminal_universal_access"),
-                       get_object_value(right_group.base, "base:terminal_universal_access"));
+        racshell::add_difference(comparison.differences, "owner",
+                                 racshell::get_object_value(left_base, "base:owner"),
+                                 racshell::get_object_value(right_base, "base:owner"));
+        racshell::add_difference(comparison.differences, "created_date",
+                                 racshell::get_object_value(left_base, "base:create_date"),
+                                 racshell::get_object_value(right_base, "base:create_date"));
+        racshell::add_difference(comparison.differences, "superior_group",
+                                 racshell::get_object_value(left_base, "base:superior_group"),
+                                 racshell::get_object_value(right_base, "base:superior_group"));
+        racshell::add_difference(comparison.differences, "installation_data",
+                                 racshell::get_object_value(left_base, "base:installation_data"),
+                                 racshell::get_object_value(right_base, "base:installation_data"));
+        racshell::add_difference(comparison.differences, "universal",
+                                 racshell::get_object_value(left_base, "base:universal"),
+                                 racshell::get_object_value(right_base, "base:universal"));
+        racshell::add_difference(comparison.differences, "terminal_universal_access",
+                                 racshell::get_object_value(left_base, "base:terminal_universal_access"),
+                                 racshell::get_object_value(right_base, "base:terminal_universal_access"));
 
         if (compare_omvs)
         {
-            add_difference(comparison.differences, "omvs",
-                           get_object_value(left_group.profile, "omvs"),
-                           get_object_value(right_group.profile, "omvs"));
+            racshell::add_difference(comparison.differences, "omvs",
+                                     racshell::get_object_value(left_profile, "omvs"),
+                                     racshell::get_object_value(right_profile, "omvs"));
         }
 
         if (compare_csdata)
         {
-            add_difference(comparison.differences, "csdata",
-                           get_object_value(left_group.profile, "csdata"),
-                           get_object_value(right_group.profile, "csdata"));
+            racshell::add_difference(comparison.differences, "csdata",
+                                     racshell::get_object_value(left_profile, "csdata"),
+                                     racshell::get_object_value(right_profile, "csdata"));
         }
 
         if (compare_users)
         {
-            add_connected_user_differences(left_group, right_group, comparison.differences);
+            add_connected_user_differences(left_base, right_base, comparison.differences);
         }
 
         comparison.identical = comparison.differences.empty();
         return comparison;
     }
 
-    nlohmann::json get_object_value(const nlohmann::json &object, const char *key)
-    {
-        const auto it = object.find(key);
-        if (it == object.end())
-        {
-            return nullptr;
-        }
-        return *it;
-    }
-
-    void add_difference(nlohmann::json &differences,
-                        const char *label,
-                        const nlohmann::json &left,
-                        const nlohmann::json &right)
-    {
-        if (left != right)
-        {
-            differences[label] = {
-                {"left", left},
-                {"right", right}};
-        }
-    }
-
-    void add_connected_user_differences(const ExtractedGroup &left_group,
-                                        const ExtractedGroup &right_group,
+    void add_connected_user_differences(const nlohmann::json &left_base,
+                                        const nlohmann::json &right_base,
                                         nlohmann::json &differences)
     {
-        const std::map<std::string, std::string> left_users = racshell::to_user_map(get_object_value(left_group.base, "base:connected_users"));
-        const std::map<std::string, std::string> right_users = racshell::to_user_map(get_object_value(right_group.base, "base:connected_users"));
+        const std::map<std::string, std::string> left_users = racshell::to_user_map(racshell::get_object_value(left_base, "base:connected_users"));
+        const std::map<std::string, std::string> right_users = racshell::to_user_map(racshell::get_object_value(right_base, "base:connected_users"));
 
         nlohmann::json only_in_left = nlohmann::json::array();
         nlohmann::json only_in_right = nlohmann::json::array();

@@ -3,11 +3,14 @@
 #include <argparse.hpp>
 #include <nlohmann/json.hpp>
 #include <map>
+#include <set>
 #include <string>
 #include <iostream>
 #include <algorithm>
 #include <cctype>
 #include <string_view>
+
+#include "sear/sear.h"
 
 namespace racshell
 {
@@ -545,6 +548,149 @@ namespace racshell
         }
 
         return result;
+    }
+
+    /**
+     * @brief Executes a generic extract request and returns the raw SEAR JSON response.
+     * @param admin_type RACF admin type, e.g. "user" or "group".
+     * @param id_key Request key used for the entity id, e.g. "userid".
+     * @param entity_id Entity identifier to extract.
+     * @param debug Enables SEAR debug mode.
+     * @return Raw SEAR response JSON string or empty string when no response is returned.
+     */
+    inline std::string execute_extract_request(const char *admin_type,
+                                               const char *id_key,
+                                               const std::string &entity_id,
+                                               bool debug)
+    {
+        const nlohmann::json request = {
+            {"operation", "extract"},
+            {"admin_type", admin_type},
+            {id_key, entity_id}};
+
+        const std::string request_json = request.dump();
+        sear_result_t *result = sear(request_json.c_str(), request_json.length(), debug);
+        if (result == nullptr || result->result_json == nullptr)
+        {
+            return {};
+        }
+
+        return result->result_json;
+    }
+
+    /**
+     * @brief Validates and extracts profile/base from a generic extract response.
+     * @param result_json Raw SEAR response JSON string.
+     * @param entity_type Logical entity name used in errors, e.g. "user".
+     * @param entity_id Entity identifier used in errors.
+     * @param profile Parsed profile JSON output.
+     * @param base Parsed base JSON output.
+     * @param error_message Populated failure details on error.
+     * @return True when extraction data is valid and available.
+     */
+    inline bool parse_extract_payload(const std::string &result_json,
+                                      const std::string &entity_type,
+                                      const std::string &entity_id,
+                                      nlohmann::json &profile,
+                                      nlohmann::json &base,
+                                      std::string &error_message)
+    {
+        if (result_json.empty())
+        {
+            error_message = "No response returned for " + entity_type + " " + entity_id;
+            return false;
+        }
+
+        const SearResponseInfo info = validate_sear_response(result_json.c_str(), entity_type);
+        if (!info.success)
+        {
+            error_message = info.error_message;
+            return false;
+        }
+
+        profile = info.profile;
+        base = info.base;
+        return true;
+    }
+
+    /**
+     * @brief Returns an object value when present; otherwise returns JSON null.
+     * @param object Source JSON object.
+     * @param key Key to fetch.
+     * @return Value for key or null when key is absent.
+     */
+    inline nlohmann::json get_object_value(const nlohmann::json &object, const char *key)
+    {
+        const auto it = object.find(key);
+        if (it == object.end())
+        {
+            return nullptr;
+        }
+        return *it;
+    }
+
+    /**
+     * @brief Adds a left/right difference object when two values differ.
+     * @param differences Destination differences JSON object.
+     * @param label Difference label.
+     * @param left Left-side value.
+     * @param right Right-side value.
+     */
+    inline void add_difference(nlohmann::json &differences,
+                               const char *label,
+                               const nlohmann::json &left,
+                               const nlohmann::json &right)
+    {
+        if (left != right)
+        {
+            differences[label] = {
+                {"left", left},
+                {"right", right}};
+        }
+    }
+
+    /**
+     * @brief Adds set-based list differences under only_in_left/only_in_right.
+     * @param differences Destination differences JSON object.
+     * @param label Difference label.
+     * @param left Left-side list.
+     * @param right Right-side list.
+     */
+    inline void add_list_difference(nlohmann::json &differences,
+                                    const char *label,
+                                    const std::vector<std::string> &left,
+                                    const std::vector<std::string> &right)
+    {
+        if (left == right)
+        {
+            return;
+        }
+
+        const std::set<std::string> left_set(left.begin(), left.end());
+        const std::set<std::string> right_set(right.begin(), right.end());
+
+        nlohmann::json only_in_left = nlohmann::json::array();
+        nlohmann::json only_in_right = nlohmann::json::array();
+
+        for (const auto &entry : left_set)
+        {
+            if (right_set.find(entry) == right_set.end())
+            {
+                only_in_left.push_back(entry);
+            }
+        }
+
+        for (const auto &entry : right_set)
+        {
+            if (left_set.find(entry) == left_set.end())
+            {
+                only_in_right.push_back(entry);
+            }
+        }
+
+        differences[label] = {
+            {"only_in_left", only_in_left},
+            {"only_in_right", only_in_right}};
     }
 
 } // namespace racshell
