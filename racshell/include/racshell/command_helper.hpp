@@ -614,6 +614,78 @@ namespace racshell
     }
 
     /**
+     * @brief Container for paired extract request payloads.
+     */
+    struct ExtractPairPayload
+    {
+        std::string left_raw_response_json;
+        std::string right_raw_response_json;
+        nlohmann::json left_response_json;
+        nlohmann::json right_response_json;
+        nlohmann::json left_profile;
+        nlohmann::json left_base;
+        nlohmann::json right_profile;
+        nlohmann::json right_base;
+    };
+
+    /**
+     * @brief Loads and validates extract payloads for two entities.
+     * @param admin_type RACF admin type, e.g. "user" or "group".
+     * @param id_key Request key used for the entity id, e.g. "userid".
+     * @param left_id Left-side entity identifier.
+     * @param right_id Right-side entity identifier.
+     * @param debug Enables SEAR debug mode.
+     * @param raw_json_output When true, only raw/parsed response JSON is populated.
+     * @param payload Output payload container.
+     * @param error_message Populated failure details on error.
+     * @return True when payloads are loaded successfully.
+     */
+    inline bool load_extract_pair(const char *admin_type,
+                                  const char *id_key,
+                                  const std::string &left_id,
+                                  const std::string &right_id,
+                                  bool debug,
+                                  bool raw_json_output,
+                                  ExtractPairPayload &payload,
+                                  std::string &error_message)
+    {
+        payload.left_raw_response_json = execute_extract_request(admin_type, id_key, left_id, debug);
+        payload.right_raw_response_json = execute_extract_request(admin_type, id_key, right_id, debug);
+
+        if (raw_json_output)
+        {
+            std::string parse_error;
+            parse_sear_response_json(payload.left_raw_response_json.c_str(), payload.left_response_json, parse_error);
+            parse_sear_response_json(payload.right_raw_response_json.c_str(), payload.right_response_json, parse_error);
+            return true;
+        }
+
+        if (!parse_extract_payload(payload.left_raw_response_json,
+                                   admin_type,
+                                   left_id,
+                                   payload.left_profile,
+                                   payload.left_base,
+                                   error_message))
+        {
+            error_message = left_id + ": " + error_message;
+            return false;
+        }
+
+        if (!parse_extract_payload(payload.right_raw_response_json,
+                                   admin_type,
+                                   right_id,
+                                   payload.right_profile,
+                                   payload.right_base,
+                                   error_message))
+        {
+            error_message = right_id + ": " + error_message;
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * @brief Returns an object value when present; otherwise returns JSON null.
      * @param object Source JSON object.
      * @param key Key to fetch.

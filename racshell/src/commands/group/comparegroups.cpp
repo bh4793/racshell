@@ -32,56 +32,39 @@ namespace
         comparison.compare_csdata = compare_csdata;
         comparison.raw_json_output = raw_json_output;
 
-        comparison.left.raw_response_json = racshell::execute_extract_request("group", "group", left_groupid, debug);
-        comparison.right.raw_response_json = racshell::execute_extract_request("group", "group", right_groupid, debug);
+        racshell::ExtractPairPayload payload;
+        std::string error_message;
+        if (!racshell::load_extract_pair("group",
+                                         "group",
+                                         left_groupid,
+                                         right_groupid,
+                                         debug,
+                                         raw_json_output,
+                                         payload,
+                                         error_message))
+        {
+            throw std::runtime_error(error_message);
+        }
+
+        comparison.left.raw_response_json = payload.left_raw_response_json;
+        comparison.right.raw_response_json = payload.right_raw_response_json;
+        comparison.left.response_json = payload.left_response_json;
+        comparison.right.response_json = payload.right_response_json;
 
         if (raw_json_output)
         {
-            nlohmann::json left_response;
-            std::string parse_error;
-            if (racshell::parse_sear_response_json(comparison.left.raw_response_json.c_str(), left_response, parse_error))
-            {
-                comparison.left.response_json = left_response;
-            }
-
-            nlohmann::json right_response;
-            if (racshell::parse_sear_response_json(comparison.right.raw_response_json.c_str(), right_response, parse_error))
-            {
-                comparison.right.response_json = right_response;
-            }
-
             return comparison;
         }
 
-        nlohmann::json left_profile;
-        nlohmann::json left_base;
-        nlohmann::json right_profile;
-        nlohmann::json right_base;
-        std::string error_message;
-        if (!racshell::parse_extract_payload(comparison.left.raw_response_json,
-                                             "group",
-                                             left_groupid,
-                                             left_profile,
-                                             left_base,
-                                             error_message))
-        {
-            throw std::runtime_error(left_groupid + ": " + error_message);
-        }
+        comparison.left.profile = payload.left_profile;
+        comparison.left.base = payload.left_base;
+        comparison.right.profile = payload.right_profile;
+        comparison.right.base = payload.right_base;
 
-        if (!racshell::parse_extract_payload(comparison.right.raw_response_json,
-                                             "group",
-                                             right_groupid,
-                                             right_profile,
-                                             right_base,
-                                             error_message))
-        {
-            throw std::runtime_error(right_groupid + ": " + error_message);
-        }
-
-        comparison.left.profile = left_profile;
-        comparison.left.base = left_base;
-        comparison.right.profile = right_profile;
-        comparison.right.base = right_base;
+        const nlohmann::json &left_profile = comparison.left.profile;
+        const nlohmann::json &left_base = comparison.left.base;
+        const nlohmann::json &right_profile = comparison.right.profile;
+        const nlohmann::json &right_base = comparison.right.base;
 
         racshell::add_difference(comparison.differences, "owner",
                                  racshell::get_object_value(left_base, "base:owner"),
