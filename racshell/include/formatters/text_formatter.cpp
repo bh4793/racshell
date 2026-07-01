@@ -50,8 +50,7 @@ namespace
         }
     }
 
-    // Helper to append access list to text output
-    inline void append_access_list(std::stringstream &ss, const std::vector<AccessEntry> &access_list)
+    void append_access_list(std::stringstream &ss, const std::vector<AccessEntry> &access_list)
     {
         if (!access_list.empty())
         {
@@ -284,9 +283,10 @@ std::string TextFormatter::format(const GroupComparisonData &comparison)
 
     if (comparison.identical)
     {
-        racshell::print_success_prefix(ss);
-        ss << "Groups " << comparison.left.groupid << " and " << comparison.right.groupid
-           << " are identical for compared fields.\n";
+        racshell::print_colored_text(ss, rachshell::terminal_color::blue, 
+            "Groups " + comparison.left.groupid + 
+            " and " + comparison.right.groupid +
+            " are identical for compared fields.\n");
         return ss.str();
     }
 
@@ -348,9 +348,10 @@ std::string TextFormatter::format(const UserComparisonData &comparison)
 
     if (comparison.identical)
     {
-        racshell::print_success_prefix(ss);
-        ss << "Users " << comparison.left.userid << " and " << comparison.right.userid
-           << " are identical for compared fields.\n";
+        racshell::print_colored_text(ss, rachshell::terminal_color::blue, 
+            "Users " + comparison.left.userid + 
+            " and " + comparison.right.userid +
+            " are identical for compared fields.\n");
         return ss.str();
     }
 

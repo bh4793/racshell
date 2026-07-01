@@ -93,6 +93,21 @@ namespace racshell
     }
 
     /**
+     * @brief Writes text in the given color and automatically resets the color.
+     * @param output Stream to write to.
+     * @param color ANSI color escape sequence.
+     * @param text Text to print using the given color.
+     * @return The same output stream for chaining.
+     */
+    inline std::ostream &print_colored_text(std::ostream &output,
+                                            std::string_view color,
+                                            std::string_view text)
+    {
+        colorize(output, color) << text;
+        return reset_color(output);
+    }
+
+    /**
      * @brief Prints a standardized error prefix.
      * @param output Stream to write to.
      *
