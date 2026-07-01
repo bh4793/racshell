@@ -283,7 +283,7 @@ std::string TextFormatter::format(const GroupComparisonData &comparison)
 
     if (comparison.identical)
     {
-        racshell::print_colored_text(ss, rachshell::terminal_color::blue, 
+        racshell::print_colored_text(ss, racshell::terminal_color::blue,
             "Groups " + comparison.left.groupid + 
             " and " + comparison.right.groupid +
             " are identical for compared fields.\n");
@@ -348,7 +348,7 @@ std::string TextFormatter::format(const UserComparisonData &comparison)
 
     if (comparison.identical)
     {
-        racshell::print_colored_text(ss, rachshell::terminal_color::blue, 
+        racshell::print_colored_text(ss, racshell::terminal_color::blue,
             "Users " + comparison.left.userid + 
             " and " + comparison.right.userid +
             " are identical for compared fields.\n");

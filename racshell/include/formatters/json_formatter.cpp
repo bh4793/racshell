@@ -161,11 +161,12 @@ std::string JsonFormatter::format(const GroupComparisonData &comparison)
             return output.dump(2);
         }
 
-        return {
+        const nlohmann::json output = {
             {"left_group", comparison.left.groupid},
             {"right_group", comparison.right.groupid},
             {"identical", comparison.identical},
-            {"differences", comparison.differences}}.dump(2);
+            {"differences", comparison.differences}};
+        return output.dump(2);
 }
 
 std::string JsonFormatter::format(const UserComparisonData &comparison)
@@ -197,9 +198,10 @@ std::string JsonFormatter::format(const UserComparisonData &comparison)
             return output.dump(2);
         }
 
-        return {
+        const nlohmann::json output = {
             {"left_user", comparison.left.userid},
             {"right_user", comparison.right.userid},
             {"identical", comparison.identical},
-            {"differences", comparison.differences}}.dump(2);
+            {"differences", comparison.differences}};
+        return output.dump(2);
 }
